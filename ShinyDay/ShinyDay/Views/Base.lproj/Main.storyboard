@@ -54,7 +54,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="pXt-l1-PXQ">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SummaryCollectionViewCell" id="pXt-l1-PXQ" customClass="SummaryCollectionViewCell" customModule="ShinyDay" customModuleProvider="target">
                                         <rect key="frame" x="51" y="0.0" width="300" height="180"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="dJB-a7-wvJ">
@@ -104,8 +104,14 @@
                                             </constraints>
                                         </collectionViewCellContentView>
                                         <size key="customSize" width="300" height="180"/>
+                                        <connections>
+                                            <outlet property="currentTemperatureLabel" destination="dUV-Pu-fzu" id="lce-Cq-3kV"/>
+                                            <outlet property="minMaxLabel" destination="VmE-M5-AoU" id="ca6-Nf-9Gi"/>
+                                            <outlet property="statusLabel" destination="Hqt-TC-XCP" id="4CV-Xz-X0Z"/>
+                                            <outlet property="weatherImageView" destination="njH-Rz-n9O" id="0QH-dg-T03"/>
+                                        </connections>
                                     </collectionViewCell>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="Uai-Sb-SMN">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ForecastCollectionViewCell" id="Uai-Sb-SMN" customClass="ForecastCollectionViewCell" customModule="ShinyDay" customModuleProvider="target">
                                         <rect key="frame" x="51" y="190" width="300" height="80"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="nnS-83-oVe">
@@ -115,13 +121,13 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EBl-ci-14h">
                                                     <rect key="frame" x="0.0" y="23.333333333333332" width="80" height="33.666666666666671"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qv1-wJ-fXN">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qv1-wJ-fXN">
                                                             <rect key="frame" x="0.0" y="0.0" width="80" height="19.333333333333332"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xfL-pV-CTX">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xfL-pV-CTX">
                                                             <rect key="frame" x="0.0" y="19.333333333333332" width="80" height="14.333333333333332"/>
                                                             <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
                                                             <nil key="textColor"/>
@@ -167,6 +173,13 @@
                                             </constraints>
                                         </collectionViewCellContentView>
                                         <size key="customSize" width="300" height="80"/>
+                                        <connections>
+                                            <outlet property="dateLabel" destination="qv1-wJ-fXN" id="Tjf-FI-9ee"/>
+                                            <outlet property="statusLabel" destination="I6y-fE-Mk3" id="cLb-9p-bR6"/>
+                                            <outlet property="temperatureLabel" destination="v6t-va-8Cj" id="M49-AY-4Bm"/>
+                                            <outlet property="timeLabel" destination="xfL-pV-CTX" id="zUe-x8-oOC"/>
+                                            <outlet property="weatherImageView" destination="y8Q-JH-1Sh" id="j3z-LZ-znc"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
