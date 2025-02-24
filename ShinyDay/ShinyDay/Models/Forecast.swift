@@ -14,7 +14,7 @@ struct Forecast: Codable {
     let cnt: Int
     
     struct ListItem: Codable {
-        let dt: Int
+        let dt: Double
         
         struct Main: Codable {
             let temp: Double
@@ -31,4 +31,11 @@ struct Forecast: Codable {
     }
     
     let list: [ListItem]
+}
+
+struct ForecastData {
+    let date: Date
+    let temperature: Double
+    let weatherStatus: String
+    let icon: String
 }

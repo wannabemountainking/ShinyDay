@@ -17,7 +17,7 @@ class WeatherApi {
     }
     
     var summary: CurrentWeather?
-    var forecast: Forecast?
+    var forecastList = [ForecastData]()
     let group = DispatchGroup()
     
     private func fetch<ParsingType: Codable>(path: Path, lat: Double, lon: Double, completion: @escaping (Result<ParsingType, Error>) -> ()) {
@@ -30,7 +30,7 @@ class WeatherApi {
             url.append(queryItems: [
                 URLQueryItem(name: "lat", value: "\(lat)"),
                 URLQueryItem(name: "lon", value: "\(lon)"),
-                URLQueryItem(name: "appid", value: "b806f37af8d3b35c2646a93ce82d5c3b"),
+                URLQueryItem(name: "appid", value: apiKey),
                 URLQueryItem(name: "units", value: "metric"),
                 URLQueryItem(name: "lang", value: "kr")
             ])
@@ -39,7 +39,7 @@ class WeatherApi {
             components?.queryItems = [
                 URLQueryItem(name: "lat", value: "\(lat)"),
                 URLQueryItem(name: "lon", value: "\(lon)"),
-                URLQueryItem(name: "appid", value: "b806f37af8d3b35c2646a93ce82d5c3b"),
+                URLQueryItem(name: "appid", value: apiKey),
                 URLQueryItem(name: "units", value: "metric"),
                 URLQueryItem(name: "lang", value: "kr")
             ]
@@ -72,6 +72,8 @@ class WeatherApi {
                 completion(.failure(error))
             }
         }
+        
+        task.resume()
     }
     
     func fetch(lat: Double, lon: Double, completion: @escaping () -> ()) {
@@ -80,7 +82,7 @@ class WeatherApi {
             switch result {
             case .success(let data):
                 self.summary = data
-            case .failure(let failure):
+            case .failure(_):
                 self.summary = nil
             }
             self.group.leave()
@@ -90,9 +92,16 @@ class WeatherApi {
         fetch(path: Path.forecast, lat: lat, lon: lat) { (result: Result<Forecast, Error>) in
             switch result {
             case .success(let data):
-                self.forecast = data
-            case .failure(let failure):
-                self.forecast = nil
+                self.forecastList = data.list.map {
+                    let date = Date(timeIntervalSince1970: TimeInterval($0.dt))
+                    let temp = $0.main.temp
+                    let status = $0.weather.first?.description ?? "알 수 없음"
+                    let icon = $0.weather.first?.icon ?? "알 수 없음"
+                    
+                    return ForecastData(date: date, temperature: temp, weatherStatus: status, icon: icon)
+                }
+            case .failure(_):
+                self.forecastList = []
             }
             self.group.leave()
         }

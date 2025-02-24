@@ -27,3 +27,5 @@ struct CurrentWeather: Codable {
     
     let dt: Int
 }
+
+
