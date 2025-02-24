@@ -10,6 +10,8 @@ import UIKit
 class ViewController: UIViewController {
     
     let api = WeatherApi()
+    
+    var topInset: CGFloat = 0.0
 
     @IBOutlet weak var weatherCollectionView: UICollectionView!
     
@@ -20,6 +22,52 @@ class ViewController: UIViewController {
             guard let self else {return}
             self.weatherCollectionView.reloadData()
         }
+        weatherCollectionView.backgroundColor = .clear
+        weatherCollectionView.showsHorizontalScrollIndicator = false
+        setupLayout()
+    }
+    
+    func setupLayout() {
+        let summaryItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(180))
+        let summaryItem = NSCollectionLayoutItem(layoutSize: summaryItemSize)
+        let summaryGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(180))
+        let summaryGroup = NSCollectionLayoutGroup.horizontal(layoutSize: summaryGroupSize, subitems: [summaryItem])
+        let summarySection = NSCollectionLayoutSection(group: summaryGroup)
+        summarySection.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20)
+        
+        let forecastItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(40))
+        let forecastItem = NSCollectionLayoutItem(layoutSize: forecastItemSize)
+        let forecastGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(40))
+        let forecastGroup = NSCollectionLayoutGroup.horizontal(layoutSize: forecastGroupSize, subitems: [forecastItem])
+        let forecastSection = NSCollectionLayoutSection(group: forecastGroup)
+        forecastSection.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20)
+        forecastSection.interGroupSpacing = 8
+        
+        let layout = UICollectionViewCompositionalLayout { sectionIndex, env in
+            switch sectionIndex {
+            case 0:
+                return summarySection
+            default:
+                return forecastSection
+            }
+        }
+        weatherCollectionView.collectionViewLayout = layout
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        guard topInset == 0.0 else {return}
+        let first = IndexPath(item: 0, section: 0)
+        guard let cell = weatherCollectionView.cellForItem(at: first) else {return}
+        
+        topInset = weatherCollectionView.frame.height - cell.frame.height - weatherCollectionView.safeAreaInsets.bottom - 20
+        
+        var inset = weatherCollectionView.contentInset
+        inset.top = topInset
+        weatherCollectionView.contentInset = inset
+        
+        weatherCollectionView.selectItem(at: first, animated: false, scrollPosition: .bottom)
     }
 }
 
@@ -47,7 +95,7 @@ extension ViewController: UICollectionViewDataSource {
                 cell.weatherImageView.image = UIImage(named: weather.icon)
                 cell.statusLabel.text = weather.description
                 cell.minMaxLabel.text = "최고 \(main.temp_max.temperatureString)  최저 \(main.temp_min.temperatureString)"
-                cell.currentTemperatureLabel.text = "\(main.temp.temperatureString)º"
+                cell.currentTemperatureLabel.text = "\(main.temp.temperatureString)"
             }
             return cell
         case 1:
