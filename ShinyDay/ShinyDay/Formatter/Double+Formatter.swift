@@ -15,9 +15,18 @@ fileprivate let temperatureFormatter: MeasurementFormatter = {
     return formatter
 }()
 
+fileprivate let numberFormatter: NumberFormatter = {
+    let f = NumberFormatter()
+    f.maximumFractionDigits = 1
+    return f
+}()
+
 extension Double {
     var temperatureString: String {
         let temp = Measurement<UnitTemperature>(value: self, unit: .celsius)
         return temperatureFormatter.string(from: temp)
+    }
+    var valueString: String {
+        return numberFormatter.string(for: self) ?? "\(self)"
     }
 }

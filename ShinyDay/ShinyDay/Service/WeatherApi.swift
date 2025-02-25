@@ -14,10 +14,13 @@ class WeatherApi {
     enum Path: String {
         case weather
         case forecast
+        case air_pollution
     }
     
     var summary: CurrentWeather?
     var forecastList = [ForecastData]()
+    var detailInfo = [DetailInfo]()
+    
     let group = DispatchGroup()
     
     private func fetch<ParsingType: Codable>(path: Path, lat: Double, lon: Double, completion: @escaping (Result<ParsingType, Error>) -> ()) {
@@ -102,6 +105,17 @@ class WeatherApi {
                 }
             case .failure(_):
                 self.forecastList = []
+            }
+            self.group.leave()
+        }
+        
+        group.enter()
+        fetch(path: Path.air_pollution, lat: lat, lon: lon) { (result: Result<AirPollution, Error>) in
+            switch result {
+            case .success(let data):
+                self.detailInfo.append(contentsOf: data.infoList)
+            case .failure(_):
+                self.detailInfo = []
             }
             self.group.leave()
         }
