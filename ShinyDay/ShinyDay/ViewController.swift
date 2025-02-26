@@ -107,7 +107,7 @@ extension ViewController: UICollectionViewDataSource {
             if let weather = api.summary?.weather.first, let main = api.summary?.main {
                 cell.weatherImageView.image = UIImage(named: weather.icon)
                 cell.statusLabel.text = weather.description
-                cell.minMaxLabel.text = "최고 \(main.temp_max.temperatureString)  최저 \(main.temp_min.temperatureString)"
+                cell.minMaxLabel.text = "최고 \(main.tempMax.temperatureString)  최저 \(main.tempMin.temperatureString)"
                 cell.currentTemperatureLabel.text = "\(main.temp.temperatureString)"
             }
             return cell

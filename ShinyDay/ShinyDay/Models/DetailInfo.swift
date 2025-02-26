@@ -11,5 +11,5 @@ struct DetailInfo {
     let image: UIImage?
     let title: String
     let value: String
-    let description: String
+    var description: String? = ""
 }

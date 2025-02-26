@@ -5,7 +5,7 @@
 //  Created by yoonie on 2/22/25.
 //
 
-import Foundation
+import UIKit
 
 
 
@@ -85,6 +85,25 @@ class WeatherApi {
             switch result {
             case .success(let data):
                 self.summary = data
+                
+                let feelsLike = DetailInfo(image: UIImage(systemName: "thermometer.variable.and.figure"),
+                                           title: "체감온도",
+                                           value: data.main.feelsLike.temperatureString)
+                self.detailInfo.append(feelsLike)
+                
+                let humidity = DetailInfo(image: UIImage(systemName: "humidity"),
+                                          title: "습도",
+                                          value: "\(data.main.humidity)%")
+                self.detailInfo.append(humidity)
+                
+                let pressure = DetailInfo(image: UIImage(systemName: "gauge.with.needle"),
+                                          title: "기압",
+                                          value: data.main.pressure.pressureStringWithoutUnit,
+                                          description: "hPa")
+                self.detailInfo.append(pressure)
+                
+                let visibility = DetailInfo(image: UIImage(systemName: "eye"), title: "가시거리", value: data.visibility.visibilityString, description: "km")
+                self.detailInfo.append(visibility)
             case .failure(_):
                 self.summary = nil
             }

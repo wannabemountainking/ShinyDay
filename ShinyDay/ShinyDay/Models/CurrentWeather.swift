@@ -18,13 +18,25 @@ struct CurrentWeather: Codable {
     let weather: [Weather]
     
     struct Main: Codable {
+        enum CodingKeys: String, CodingKey {
+            case temp
+            case feelsLike = "feels_like"
+            case tempMin = "temp_min"
+            case tempMax = "temp_max"
+            case pressure
+            case humidity
+        }
+        
         let temp: Double
-        let temp_min: Double
-        let temp_max: Double
+        let feelsLike: Double
+        let tempMin: Double
+        let tempMax: Double
+        let pressure: Int
+        let humidity: Int
     }
     
     let main: Main
-    
+    let visibility: Int
     let dt: Int
 }
 
