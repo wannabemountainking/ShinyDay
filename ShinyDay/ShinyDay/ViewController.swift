@@ -12,7 +12,9 @@ class ViewController: UIViewController {
     let api = WeatherApi()
     
     var topInset: CGFloat = 0.0
-
+    
+    @IBOutlet weak var backgroundImageView: UIImageView!
+    
     @IBOutlet weak var weatherCollectionView: UICollectionView!
     
     override func viewDidLoad() {
@@ -25,6 +27,27 @@ class ViewController: UIViewController {
         weatherCollectionView.backgroundColor = .clear
         weatherCollectionView.showsHorizontalScrollIndicator = false
         setupLayout()
+        
+        DispatchQueue.global().async { [weak self] in
+            guard let self else {return}
+            self.api.fetchRandomImage(city: "seoul") { result in
+                switch result {
+                case .success(let url):
+                    self.api.downloadImage(from: url) { result in
+                        switch result {
+                        case .success(let image):
+                            DispatchQueue.main.async {
+                                self.backgroundImageView.image = image
+                            }
+                        case .failure(let failure):
+                            print(failure)
+                        }
+                    }
+                case .failure(let failure):
+                    print(failure)
+                }
+            }
+        }
     }
     
     func setupLayout() {

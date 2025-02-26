@@ -104,6 +104,7 @@ class WeatherApi {
                 
                 let visibility = DetailInfo(image: UIImage(systemName: "eye"), title: "가시거리", value: data.visibility.visibilityString, description: "km")
                 self.detailInfo.append(visibility)
+                
             case .failure(_):
                 self.summary = nil
             }
@@ -143,4 +144,86 @@ class WeatherApi {
             completion()
         }
     }
+    
+    func fetchRandomImage(city: String, completion: @escaping (Result<URL, Error>) -> ()) {
+        guard var url = URL(string: "https://api.unsplash.com/photos/random") else {
+            completion(.failure(ApiError.invalidUrl("invalid url")))
+            return
+        }
+        
+        if #available(iOS 16.0, *) {
+            url.append(queryItems: [
+                URLQueryItem(name: "query", value: "seoul"),
+                URLQueryItem(name: "orientation", value: "portrait")
+            ])
+        } else {
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            components?.queryItems = [
+                URLQueryItem(name: "query", value: "seoul"),
+                URLQueryItem(name: "orientation", value: "portrait")
+            ]
+            url = components?.url ?? url
+        }
+        
+        var request = URLRequest(url: url)
+        request.addValue(unsplashClientId, forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error {
+                completion(.failure(ApiError.unknown))
+                return
+            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                completion(.failure(ApiError.invalidResponse))
+                return
+            }
+            guard httpResponse.statusCode == 200 else {
+                completion(.failure(ApiError.failed(httpResponse.statusCode)))
+                return
+            }
+            guard let data else {
+                completion(.failure(ApiError.emptyData))
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let decodedData = try decoder.decode(BackgroundImage.self, from: data)
+                completion(.success(decodedData.urls.regular))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
+    func downloadImage(from url: URL, completion: @escaping (Result<UIImage, Error>) -> ()) {
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error {
+                completion(.failure(ApiError.unknown))
+                return
+            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                completion(.failure(ApiError.invalidResponse))
+                return
+            }
+            guard httpResponse.statusCode == 200 else {
+                completion(.failure(ApiError.failed(httpResponse.statusCode)))
+                return
+            }
+            guard let data else {
+                completion(.failure(ApiError.emptyData))
+                return
+            }
+            
+            guard let image = UIImage(data: data) else {
+                completion(.failure(ApiError.emptyData))
+                return
+            }
+            
+            completion(.success(image))
+        }
+        task.resume()
+    }
 }
+
