@@ -20,4 +20,5 @@ struct BackgroundImage: Codable {
         }
         let userName: String
     }
+    let user: User
 }

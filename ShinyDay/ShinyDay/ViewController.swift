@@ -15,10 +15,18 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var backgroundImageView: UIImageView!
     
+    @IBOutlet weak var copyrightLabel: UILabel!
+    
+    @IBOutlet weak var copyrightLabelTrailingConstraint: NSLayoutConstraint!
+    
     @IBOutlet weak var weatherCollectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        copyrightLabel.alpha = 0.5
+        copyrightLabel.transform = CGAffineTransform(rotationAngle: -(CGFloat.pi) / 2)
+        copyrightLabel.isHidden = true
         
         api.fetch(lat: 37.571449, lon: 127.021375) { [weak self] in
             guard let self else {return}
@@ -29,22 +37,35 @@ class ViewController: UIViewController {
         setupLayout()
         
         DispatchQueue.global().async { [weak self] in
-            guard let self else {return}
-            self.api.fetchRandomImage(city: "seoul") { result in
+            guard let weakSelf = self else {return}
+            weakSelf.api.fetchLocation(lat: 37.571449, lon: 127.021375) { (result: Result<String, Error>) in
                 switch result {
-                case .success(let url):
-                    self.api.downloadImage(from: url) { result in
+                case .success(let location):
+                    weakSelf.api.fetchRandomImage(city: location) { result in
                         switch result {
-                        case .success(let image):
-                            DispatchQueue.main.async {
-                                self.backgroundImageView.image = image
+                        case .success(let url):
+                            weakSelf.api.downloadImage(from: url) { result in
+                                switch result {
+                                case .success(let image):
+                                    DispatchQueue.main.async {
+                                        weakSelf.copyrightLabel.text = weakSelf.api.copyright
+                                        weakSelf.copyrightLabel.isHidden = false
+                                        
+                                        weakSelf.copyrightLabel.layoutIfNeeded()
+                                        weakSelf.copyrightLabelTrailingConstraint.constant = -weakSelf.copyrightLabel.bounds.width / 2 + 24
+                                        
+                                        weakSelf.backgroundImageView.image = image
+                                    }
+                                case .failure(let error):
+                                    print(error.localizedDescription)
+                                }
                             }
-                        case .failure(let failure):
-                            print(failure)
+                        case .failure(let error):
+                            print(error.localizedDescription)
                         }
                     }
-                case .failure(let failure):
-                    print(failure)
+                case .failure(let error):
+                    print(error.localizedDescription)
                 }
             }
         }

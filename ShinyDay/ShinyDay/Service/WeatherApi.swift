@@ -12,19 +12,21 @@ import UIKit
 class WeatherApi {
     
     enum Path: String {
-        case weather
-        case forecast
-        case air_pollution
+        case weather = "data/2.5/weather"
+        case forecast = "data/2.5/forecast"
+        case air_pollution = "data/2.5/air_pollution"
+        case reverseGeocoding = "geo/1.0/reverse"
     }
     
     var summary: CurrentWeather?
     var forecastList = [ForecastData]()
     var detailInfo = [DetailInfo]()
+    var copyright: String?
     
     let group = DispatchGroup()
     
     private func fetch<ParsingType: Codable>(path: Path, lat: Double, lon: Double, completion: @escaping (Result<ParsingType, Error>) -> ()) {
-        guard var url = URL(string: "https://api.openweathermap.org/data/2.5/\(path.rawValue)") else {
+        guard var url = URL(string: "https://api.openweathermap.org/\(path.rawValue)") else {
             completion(.failure(ApiError.invalidUrl(path.rawValue)))
             return
         }
@@ -145,6 +147,18 @@ class WeatherApi {
         }
     }
     
+    func fetchLocation(lat: Double, lon: Double, completion: @escaping (Result<String, Error>) -> ()) {
+        fetch(path: Path.reverseGeocoding, lat: lat, lon: lon) { (result: Result<[Location], Error>) in
+            switch result {
+            case .success(let locations):
+                let cityName = locations.first?.name ?? ""
+                completion(.success(cityName))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
     func fetchRandomImage(city: String, completion: @escaping (Result<URL, Error>) -> ()) {
         guard var url = URL(string: "https://api.unsplash.com/photos/random") else {
             completion(.failure(ApiError.invalidUrl("invalid url")))
@@ -170,7 +184,7 @@ class WeatherApi {
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error {
-                completion(.failure(ApiError.unknown))
+                completion(.failure(error))
                 return
             }
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -189,6 +203,7 @@ class WeatherApi {
             do {
                 let decoder = JSONDecoder()
                 let decodedData = try decoder.decode(BackgroundImage.self, from: data)
+                self.copyright = "© \(decodedData.user.userName)"
                 completion(.success(decodedData.urls.regular))
             } catch {
                 completion(.failure(error))
@@ -200,7 +215,7 @@ class WeatherApi {
     func downloadImage(from url: URL, completion: @escaping (Result<UIImage, Error>) -> ()) {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error {
-                completion(.failure(ApiError.unknown))
+                completion(.failure(error))
                 return
             }
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -225,5 +240,7 @@ class WeatherApi {
         }
         task.resume()
     }
+    
+    
 }
 

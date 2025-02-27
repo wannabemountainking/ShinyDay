@@ -44,6 +44,12 @@
                                     <constraint firstItem="2p5-0f-yzk" firstAttribute="leading" secondItem="Fgz-Iq-DAI" secondAttribute="leading" id="wNR-1c-TnD"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hh6-4b-eOg">
+                                <rect key="frame" x="366.66666666666669" y="431" width="35.333333333333314" height="12"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="DKG-AD-zHS">
                                 <rect key="frame" x="0.0" y="122" width="402" height="718"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -121,13 +127,13 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EBl-ci-14h">
                                                     <rect key="frame" x="0.0" y="23.333333333333332" width="80" height="33.666666666666671"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qv1-wJ-fXN">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qv1-wJ-fXN">
                                                             <rect key="frame" x="0.0" y="0.0" width="80" height="19.333333333333332"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xfL-pV-CTX">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xfL-pV-CTX">
                                                             <rect key="frame" x="0.0" y="19.333333333333332" width="80" height="14.333333333333332"/>
                                                             <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
                                                             <nil key="textColor"/>
@@ -273,12 +279,18 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="DKG-AD-zHS" secondAttribute="trailing" id="X5x-5u-7Ih"/>
                             <constraint firstAttribute="bottom" secondItem="0nD-35-W0d" secondAttribute="bottom" id="aee-Im-wnp"/>
                             <constraint firstItem="Nfq-eZ-gvk" firstAttribute="trailing" secondItem="0nD-35-W0d" secondAttribute="trailing" id="dM6-Tw-EIz"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Hh6-4b-eOg" secondAttribute="trailing" id="dcj-WD-r2U"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Hh6-4b-eOg" secondAttribute="bottom" constant="397" id="dgc-Bi-hk7"/>
+                            <constraint firstItem="Hh6-4b-eOg" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="gHC-Jc-amd"/>
                             <constraint firstItem="Fgz-Iq-DAI" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="h7C-Y8-UhJ"/>
+                            <constraint firstItem="Hh6-4b-eOg" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" symbolic="YES" id="jG5-vf-nbM"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="DKG-AD-zHS" secondAttribute="bottom" id="yyg-MT-KC7"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="backgroundImageView" destination="0nD-35-W0d" id="wr5-I4-sBk"/>
+                        <outlet property="copyrightLabel" destination="Hh6-4b-eOg" id="G7b-Ii-OCj"/>
+                        <outlet property="copyrightLabelTrailingConstraint" destination="dcj-WD-r2U" id="PI9-eB-5PT"/>
                         <outlet property="weatherCollectionView" destination="DKG-AD-zHS" id="JEK-QV-8Hn"/>
                     </connections>
                 </viewController>
