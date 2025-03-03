@@ -21,7 +21,7 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="0nD-35-W0d">
                                 <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                             </imageView>
-                            <view alpha="0.40000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nfq-eZ-gvk">
+                            <view hidden="YES" alpha="0.40000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nfq-eZ-gvk">
                                 <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
@@ -61,10 +61,10 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SummaryCollectionViewCell" id="pXt-l1-PXQ" customClass="SummaryCollectionViewCell" customModule="ShinyDay" customModuleProvider="target">
-                                        <rect key="frame" x="51" y="0.0" width="300" height="180"/>
+                                        <rect key="frame" x="51" y="0.0" width="300" height="250"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="dJB-a7-wvJ">
-                                            <rect key="frame" x="0.0" y="0.0" width="300" height="180"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="300" height="250"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="njH-Rz-n9O">
@@ -81,14 +81,14 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VmE-M5-AoU">
-                                                    <rect key="frame" x="0.0" y="60.000000000000007" width="300" height="19.333333333333336"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <rect key="frame" x="0.0" y="59.999999999999993" width="300" height="28.666666666666664"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="999" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dUV-Pu-fzu">
-                                                    <rect key="frame" x="0.0" y="89.333333333333314" width="300" height="90.666666666666686"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="ultraLight" pointSize="100"/>
+                                                    <rect key="frame" x="0.0" y="98.666666666666671" width="300" height="151.33333333333331"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="thin" pointSize="120"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -109,7 +109,7 @@
                                                 <constraint firstItem="VmE-M5-AoU" firstAttribute="trailing" secondItem="Hqt-TC-XCP" secondAttribute="trailing" id="eNH-dy-NJQ"/>
                                             </constraints>
                                         </collectionViewCellContentView>
-                                        <size key="customSize" width="300" height="180"/>
+                                        <size key="customSize" width="300" height="250"/>
                                         <connections>
                                             <outlet property="currentTemperatureLabel" destination="dUV-Pu-fzu" id="lce-Cq-3kV"/>
                                             <outlet property="minMaxLabel" destination="VmE-M5-AoU" id="ca6-Nf-9Gi"/>
@@ -118,7 +118,7 @@
                                         </connections>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ForecastCollectionViewCell" id="Uai-Sb-SMN" customClass="ForecastCollectionViewCell" customModule="ShinyDay" customModuleProvider="target">
-                                        <rect key="frame" x="51" y="190" width="300" height="80"/>
+                                        <rect key="frame" x="51" y="260" width="300" height="80"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="nnS-83-oVe">
                                             <rect key="frame" x="0.0" y="0.0" width="300" height="80"/>
@@ -127,13 +127,13 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EBl-ci-14h">
                                                     <rect key="frame" x="0.0" y="23.333333333333332" width="80" height="33.666666666666671"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qv1-wJ-fXN">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qv1-wJ-fXN">
                                                             <rect key="frame" x="0.0" y="0.0" width="80" height="19.333333333333332"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xfL-pV-CTX">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xfL-pV-CTX">
                                                             <rect key="frame" x="0.0" y="19.333333333333332" width="80" height="14.333333333333332"/>
                                                             <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
                                                             <nil key="textColor"/>
@@ -188,7 +188,7 @@
                                         </connections>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DetailInfoCollectionViewCell" id="3Ya-4w-JE3" customClass="DetailInfoCollectionViewCell" customModule="ShinyDay" customModuleProvider="target">
-                                        <rect key="frame" x="120" y="280" width="162" height="129"/>
+                                        <rect key="frame" x="120" y="350" width="162" height="129"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="MwB-bD-kNL">
                                             <rect key="frame" x="0.0" y="0.0" width="162" height="129"/>

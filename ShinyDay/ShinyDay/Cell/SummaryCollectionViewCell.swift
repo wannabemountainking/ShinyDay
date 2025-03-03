@@ -19,8 +19,27 @@ class SummaryCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         let tColor = UIColor.white
+        weatherImageView.layer.shadowOpacity = 1
+        weatherImageView.layer.shadowOffset = .zero
+        weatherImageView.layer.shadowRadius = 6
+        
         statusLabel.textColor = tColor
+        statusLabel.layer.shadowOpacity = 1
+        statusLabel.layer.shadowOffset = .zero
+        statusLabel.layer.shadowRadius = 6
+        
         minMaxLabel.textColor = tColor
+        minMaxLabel.layer.shadowOpacity = 1
+        minMaxLabel.layer.shadowOffset = .zero
+        minMaxLabel.layer.shadowRadius = 6
+        
         currentTemperatureLabel.textColor = tColor
+        currentTemperatureLabel.layer.shadowOpacity = 1
+        currentTemperatureLabel.layer.shadowOffset = .zero
+        currentTemperatureLabel.layer.shadowRadius = 6
+        
+        weatherImageView.clipsToBounds = false
+        contentView.clipsToBounds = false
+        clipsToBounds = false
     }
 }

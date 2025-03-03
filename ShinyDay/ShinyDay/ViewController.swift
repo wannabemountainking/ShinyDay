@@ -23,52 +23,81 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        weatherCollectionView.alpha = 0.0
         
         copyrightLabel.alpha = 0.5
         copyrightLabel.transform = CGAffineTransform(rotationAngle: -(CGFloat.pi) / 2)
         copyrightLabel.isHidden = true
         
-        api.fetch(lat: 37.571449, lon: 127.021375) { [weak self] in
-            guard let self else {return}
-            self.weatherCollectionView.reloadData()
+        Task {
+            do {
+                try await api.fetch(lat: 37.571449, lon: 127.021375)
+                self.weatherCollectionView.reloadData()
+            } catch {
+                print(error)
+            }
+            UIView.animate(withDuration: 0.7) {
+                self.weatherCollectionView.alpha = 1.0
+            }
         }
+        
         weatherCollectionView.backgroundColor = .clear
         weatherCollectionView.showsHorizontalScrollIndicator = false
         setupLayout()
         
-        DispatchQueue.global().async { [weak self] in
-            guard let weakSelf = self else {return}
-            weakSelf.api.fetchLocation(lat: 37.571449, lon: 127.021375) { (result: Result<String, Error>) in
-                switch result {
-                case .success(let location):
-                    weakSelf.api.fetchRandomImage(city: location) { result in
-                        switch result {
-                        case .success(let url):
-                            weakSelf.api.downloadImage(from: url) { result in
-                                switch result {
-                                case .success(let image):
-                                    DispatchQueue.main.async {
-                                        weakSelf.copyrightLabel.text = weakSelf.api.copyright
-                                        weakSelf.copyrightLabel.isHidden = false
-                                        
-                                        weakSelf.copyrightLabel.layoutIfNeeded()
-                                        weakSelf.copyrightLabelTrailingConstraint.constant = -weakSelf.copyrightLabel.bounds.width / 2 + 24
-                                        
-                                        weakSelf.backgroundImageView.image = image
-                                    }
-                                case .failure(let error):
-                                    print(error.localizedDescription)
-                                }
-                            }
-                        case .failure(let error):
-                            print(error.localizedDescription)
-                        }
-                    }
-                case .failure(let error):
-                    print(error.localizedDescription)
+        Task {
+            do {
+                let location = try await self.api.fetchLocation(lat: 37.571449, lon: 127.021375)
+                let url = try await self.api.fetchRandomImage(city: location)
+                let image = try await self.api.downloadImage(from: url)
+                
+                self.copyrightLabel.text = self.api.copyright
+                self.copyrightLabel.isHidden = false
+                self.copyrightLabel.layoutIfNeeded()
+                self.copyrightLabelTrailingConstraint.constant = -self.copyrightLabel.bounds.width / 2 + 8
+                UIView.transition(with: backgroundImageView, duration: 0.7, options: .transitionCrossDissolve) {
+                    self.backgroundImageView.image = image
                 }
+            } catch {
+                print(error)
             }
+            
+
         }
+//        
+//        DispatchQueue.global().async { [weak self] in
+//            guard let weakSelf = self else {return}
+//            weakSelf.api.fetchLocation(lat: 37.571449, lon: 127.021375) { (result: Result<String, Error>) in
+//                switch result {
+//                case .success(let location):
+//                    weakSelf.api.fetchRandomImage(city: location) { result in
+//                        switch result {
+//                        case .success(let url):
+//                            weakSelf.api.downloadImage(from: url) { result in
+//                                switch result {
+//                                case .success(let image):
+//                                    DispatchQueue.main.async {
+//                                        weakSelf.copyrightLabel.text = weakSelf.api.copyright
+//                                        weakSelf.copyrightLabel.isHidden = false
+//                                        
+//                                        weakSelf.copyrightLabel.layoutIfNeeded()
+//                                        weakSelf.copyrightLabelTrailingConstraint.constant = -weakSelf.copyrightLabel.bounds.width / 2 + 24
+//                                        
+//                                        weakSelf.backgroundImageView.image = image
+//                                    }
+//                                case .failure(let error):
+//                                    print(error.localizedDescription)
+//                                }
+//                            }
+//                        case .failure(let error):
+//                            print(error.localizedDescription)
+//                        }
+//                    }
+//                case .failure(let error):
+//                    print(error.localizedDescription)
+//                }
+//            }
+//        }
     }
     
     func setupLayout() {
@@ -84,7 +113,7 @@ class ViewController: UIViewController {
         let forecastGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(40))
         let forecastGroup = NSCollectionLayoutGroup.horizontal(layoutSize: forecastGroupSize, subitems: [forecastItem])
         let forecastSection = NSCollectionLayoutSection(group: forecastGroup)
-        forecastSection.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20)
+        forecastSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 30, bottom: 20, trailing: 30)
         forecastSection.interGroupSpacing = 8
         
         let detailItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(150))
@@ -106,6 +135,13 @@ class ViewController: UIViewController {
                 return detailSection
             }
         }
+        
+        layout.register(ForecastBackgroundCollectionReusableView.self, forDecorationViewOfKind: String(describing: ForecastBackgroundCollectionReusableView.self))
+        
+        let decorationItem = NSCollectionLayoutDecorationItem.background(elementKind: String(describing: ForecastBackgroundCollectionReusableView.self))
+        decorationItem.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20)
+        forecastSection.decorationItems = [decorationItem]
+        
         weatherCollectionView.collectionViewLayout = layout
     }
     
