@@ -99,7 +99,7 @@ class WeatherApi {
                                   title: "습도",
                                   value: "\(data.main.humidity)%")
         self.detailInfo.append(humidity)
-        let pressure = DetailInfo(image: UIImage(systemName: "gauge.with.needle"),
+        let pressure = DetailInfo(image: UIImage(systemName: "gauge.with.dots.needle.50percent"),
                                   title: "기압",
                                   value: data.main.pressure.pressureStringWithoutUnit,
                                   description: "hPa")
@@ -111,7 +111,7 @@ class WeatherApi {
             let date = Date(timeIntervalSince1970: TimeInterval($0.dt))
             let temp = $0.main.temp
             let status = $0.weather.first?.description ?? "알 수 없음"
-            let icon = $0.weather.first?.icon ?? "알 수 없음"
+            let icon = $0.weather.first?.icon ?? ""
             
             return ForecastData(date: date, temperature: temp, weatherStatus: status, icon: icon)
         }
@@ -130,13 +130,13 @@ class WeatherApi {
         
         if #available(iOS 16.0, *) {
             url.append(queryItems: [
-                URLQueryItem(name: "query", value: "seoul"),
+                URLQueryItem(name: "query", value: city),
                 URLQueryItem(name: "orientation", value: "portrait")
             ])
         } else {
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
             components?.queryItems = [
-                URLQueryItem(name: "query", value: "seoul"),
+                URLQueryItem(name: "query", value: city),
                 URLQueryItem(name: "orientation", value: "portrait")
             ]
             url = components?.url ?? url

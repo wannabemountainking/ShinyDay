@@ -10,8 +10,10 @@ import UIKit
 class ViewController: UIViewController {
     
     let api = WeatherApi()
-    
+    let manager = LocationManager()
     var topInset: CGFloat = 0.0
+    
+    @IBOutlet weak var locationNameLabel: UILabel!
     
     @IBOutlet weak var backgroundImageView: UIImageView!
     
@@ -25,18 +27,20 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         weatherCollectionView.alpha = 0.0
         
+        locationNameLabel.alpha = 0.0
+        locationNameLabel.layer.shadowOpacity = 1.0
+        locationNameLabel.layer.shadowOffset = .zero
+        locationNameLabel.layer.shadowRadius = 6
+        
         copyrightLabel.alpha = 0.5
         copyrightLabel.transform = CGAffineTransform(rotationAngle: -(CGFloat.pi) / 2)
         copyrightLabel.isHidden = true
         
-        Task {
-            do {
-                try await api.fetch(lat: 37.571449, lon: 127.021375)
-                self.weatherCollectionView.reloadData()
-            } catch {
-                print(error)
-            }
-            UIView.animate(withDuration: 0.7) {
+        NotificationCenter.default.addObserver(forName: .weatherDataDidFetch, object: nil, queue: .main) { [weak self] _ in
+            guard let self else {return}
+            self.weatherCollectionView.reloadData()
+            
+            UIView.animate(withDuration: 0.3) {
                 self.weatherCollectionView.alpha = 1.0
             }
         }
@@ -45,26 +49,19 @@ class ViewController: UIViewController {
         weatherCollectionView.showsHorizontalScrollIndicator = false
         setupLayout()
         
-        Task {
-            do {
-                let location = try await self.api.fetchLocation(lat: 37.571449, lon: 127.021375)
-                let url = try await self.api.fetchRandomImage(city: location)
-                let image = try await self.api.downloadImage(from: url)
-                
-                self.copyrightLabel.text = self.api.copyright
-                self.copyrightLabel.isHidden = false
-                self.copyrightLabel.layoutIfNeeded()
-                self.copyrightLabelTrailingConstraint.constant = -self.copyrightLabel.bounds.width / 2 + 8
-                UIView.transition(with: backgroundImageView, duration: 0.7, options: .transitionCrossDissolve) {
-                    self.backgroundImageView.image = image
-                }
-            } catch {
-                print(error)
-            }
+        NotificationCenter.default.addObserver(forName: .backgroundImageDidDownload, object: nil, queue: .main) { [weak self] _ in
+            guard let self else {return}
             
-
+            self.copyrightLabel.text = self.manager.api.copyright
+            self.copyrightLabel.isHidden = false
+            self.copyrightLabel.layoutIfNeeded()
+            self.copyrightLabelTrailingConstraint.constant = -self.copyrightLabel.bounds.width / 2 + 8
+            UIView.transition(with: backgroundImageView, duration: 1.0, options: .transitionCrossDissolve) {
+                self.backgroundImageView.image = self.manager.backgroundImage
+            }
         }
-//        
+        
+//
 //        DispatchQueue.global().async { [weak self] in
 //            guard let weakSelf = self else {return}
 //            weakSelf.api.fetchLocation(lat: 37.571449, lon: 127.021375) { (result: Result<String, Error>) in
@@ -172,9 +169,9 @@ extension ViewController: UICollectionViewDataSource {
         case 0:
             return 1
         case 1:
-            return api.forecastList.count // 일기예보 갯수
+            return manager.api.forecastList.count // 일기예보 갯수
         case 2:
-            return api.detailInfo.count // 부가정보 갯수
+            return manager.api.detailInfo.count // 부가정보 갯수
         default:
             return 0
         }
@@ -184,7 +181,7 @@ extension ViewController: UICollectionViewDataSource {
         switch indexPath.section {
         case 0:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: SummaryCollectionViewCell.self), for: indexPath) as! SummaryCollectionViewCell
-            if let weather = api.summary?.weather.first, let main = api.summary?.main {
+            if let weather = manager.api.summary?.weather.first, let main = manager.api.summary?.main {
                 cell.weatherImageView.image = UIImage(named: weather.icon)
                 cell.statusLabel.text = weather.description
                 cell.minMaxLabel.text = "최고 \(main.tempMax.temperatureString)  최저 \(main.tempMin.temperatureString)"
@@ -193,7 +190,7 @@ extension ViewController: UICollectionViewDataSource {
             return cell
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ForecastCollectionViewCell.self), for: indexPath) as! ForecastCollectionViewCell
-            let target = api.forecastList[indexPath.item]
+            let target = manager.api.forecastList[indexPath.item]
             cell.dateLabel.text = target.date.dateString
             cell.timeLabel.text = target.date.timeString
             cell.statusLabel.text = target.weatherStatus
@@ -202,7 +199,7 @@ extension ViewController: UICollectionViewDataSource {
             return cell
         case 2:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: DetailInfoCollectionViewCell.self), for: indexPath) as! DetailInfoCollectionViewCell
-            let target = api.detailInfo[indexPath.item]
+            let target = manager.api.detailInfo[indexPath.item]
             cell.imageView.image = target.image
             cell.titleLabel.text = target.title
             cell.valueLabel.text = target.value
