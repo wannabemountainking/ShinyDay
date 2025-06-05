@@ -8,15 +8,16 @@
 import UIKit
 import CoreLocation
 
-class LocationManager: NSObject {
+public class LocationManager: NSObject {
     let manager: CLLocationManager
-    var location: CLLocation?
-    var locationName: String?
-    let api = WeatherApi()
-    var backgroundImage: UIImage?
+    
+    public var location: CLLocation?
+    public var locationName: String?
+    public let api = WeatherApi()
+    public var backgroundImage: UIImage?
     
     //  CLLocation은 전체로 UserDefault에 저장할 수 없음(객체 힘듦) 그래서 위도 경도를 나눠서 저장해야 함
-    var lastLocation: CLLocation? {
+    public var lastLocation: CLLocation? {
         get {
             guard let lat = UserDefaults.standard.object(forKey: "lastLocationLat") as? CLLocationDegrees,
                   let lon = UserDefaults.standard.object(forKey: "lastLocationLon") as? CLLocationDegrees else {return nil}
@@ -28,7 +29,7 @@ class LocationManager: NSObject {
         }
     }
     
-    override init() {
+    public override init() {
         
         manager = CLLocationManager()
         
@@ -41,13 +42,12 @@ class LocationManager: NSObject {
         
         guard let savedLocation = lastLocation else {return}
         locationUpdate(currentLocation: savedLocation)
-        print(lastLocation)
     }
     
 }
 
 extension LocationManager: CLLocationManagerDelegate {
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .notDetermined:
             manager.requestWhenInUseAuthorization()
@@ -59,7 +59,7 @@ extension LocationManager: CLLocationManagerDelegate {
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         let error = error as NSError
         guard error.code == CLError.Code.locationUnknown.rawValue else {return}
         print(error.code)
@@ -87,12 +87,13 @@ extension LocationManager: CLLocationManagerDelegate {
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let currentLocation = locations.last {
             location = currentLocation
             
             Task {
                 await updateLocationName(location: currentLocation)
+                NotificationCenter.default.post(name: .locationNameDidUpdate, object: nil)
             }
             
             Task {
@@ -108,11 +109,12 @@ extension LocationManager: CLLocationManagerDelegate {
                 NotificationCenter.default.post(name: .backgroundImageDidDownload, object: nil)
             }
         }
-//        guard let currentLocation = locations.first else {return}
-//        location = currentLocation
-//       
-//        locationUpdate(currentLocation: currentLocation)
-//        lastLocation = currentLocation
+        guard let currentLocation = locations.last else {return}
+        location = currentLocation
+        
+        locationUpdate(currentLocation: currentLocation)
+        lastLocation = currentLocation
+
     }
     
     func updateLocationName(location: CLLocation) async {
@@ -137,7 +139,7 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 }
 
-extension Notification.Name {
+public extension Notification.Name {
     static let weatherDataDidFetch = Notification.Name("weatherDataDidFetch")
     // MARK: noti 추가해야 함
     static let backgroundImageDidDownload = Notification.Name("backgroundImageDidDownload")

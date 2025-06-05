@@ -8,7 +8,7 @@
 import Foundation
 
 
-enum ApiError: Error {
+public enum ApiError: Error {
     case invalidUrl(String)
     case unknown
     case invalidResponse

@@ -6,31 +6,32 @@
 //
 
 import UIKit
+import ShinyFormatter
 
-struct AirPollution: Codable {
+public struct AirPollution: Codable {
     
-    struct Item: Codable {
+    public struct Item: Codable {
         
-        struct Main: Codable {
-            let aqi: Int
+        public struct Main: Codable {
+            public let aqi: Int
         }
         
-        let main: Main
+        public let main: Main
         
-        struct Components: Codable {
-            let o3: Double
-            let pm2_5: Double
-            let pm10: Double
+        public struct Components: Codable {
+            public let o3: Double
+            public let pm2_5: Double
+            public let pm10: Double
         }
         
-        let components: Components
+        public let components: Components
         
     }
     
-    let list: [Item]
+    public let list: [Item]
 }
 
-extension AirPollution {
+public extension AirPollution {
     var infoList: [DetailInfo] {
         return [
             DetailInfo(image: UIImage(systemName: "aqi.medium"), title: "대기질", value: aqiString, description: "AQI - \(list.first?.main.aqi ?? 0)"),

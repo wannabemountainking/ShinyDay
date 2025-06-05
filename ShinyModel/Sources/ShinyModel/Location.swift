@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct Location: Codable {
-    let name: String
+public struct Location: Codable {
+    public let name: String
 }

@@ -12,7 +12,7 @@ fileprivate let dateFormatter: DateFormatter = {
     return f
 }()
 
-extension Date {
+public extension Date {
     var dateString: String {
         dateFormatter.dateFormat = "M월 d일"
         return dateFormatter.string(from: self)

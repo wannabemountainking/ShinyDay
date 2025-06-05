@@ -6,8 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EE4004812DF1D04C00DE641D /* ShinyFormatter in Frameworks */ = {isa = PBXBuildFile; productRef = EE4004802DF1D04C00DE641D /* ShinyFormatter */; };
+		EE4004842DF1D1A400DE641D /* ShinyService in Frameworks */ = {isa = PBXBuildFile; productRef = EE4004832DF1D1A400DE641D /* ShinyService */; };
+		EE4004872DF1D40500DE641D /* ShinyModel in Frameworks */ = {isa = PBXBuildFile; productRef = EE4004862DF1D40500DE641D /* ShinyModel */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		915DE2952D64C538006DDDAC /* ShinyDay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShinyDay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE349C5E2DF1C7DD00233F3D /* ShinyFormatter */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ShinyFormatter; path = ../ShinyFormatter; sourceTree = SOURCE_ROOT; };
+		EE4004822DF1D19000DE641D /* ShinyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ShinyService; path = ../ShinyService; sourceTree = SOURCE_ROOT; };
+		EE4004852DF1D3C000DE641D /* ShinyModel */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ShinyModel; path = ../ShinyModel; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +45,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE4004842DF1D1A400DE641D /* ShinyService in Frameworks */,
+				EE4004872DF1D40500DE641D /* ShinyModel in Frameworks */,
+				EE4004812DF1D04C00DE641D /* ShinyFormatter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,7 +57,11 @@
 		915DE28C2D64C538006DDDAC = {
 			isa = PBXGroup;
 			children = (
+				EE4004852DF1D3C000DE641D /* ShinyModel */,
+				EE4004822DF1D19000DE641D /* ShinyService */,
+				EE349C5E2DF1C7DD00233F3D /* ShinyFormatter */,
 				915DE2972D64C538006DDDAC /* ShinyDay */,
+				EE40047F2DF1D04C00DE641D /* Frameworks */,
 				915DE2962D64C538006DDDAC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +72,13 @@
 				915DE2952D64C538006DDDAC /* ShinyDay.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		EE40047F2DF1D04C00DE641D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,6 +101,9 @@
 			);
 			name = ShinyDay;
 			packageProductDependencies = (
+				EE4004802DF1D04C00DE641D /* ShinyFormatter */,
+				EE4004832DF1D1A400DE641D /* ShinyService */,
+				EE4004862DF1D40500DE641D /* ShinyModel */,
 			);
 			productName = ShinyDay;
 			productReference = 915DE2952D64C538006DDDAC /* ShinyDay.app */;
@@ -147,6 +173,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShinyDay/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "앱 사용을 허가합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -180,6 +207,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShinyDay/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "앱 사용을 허가합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -347,6 +375,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE4004802DF1D04C00DE641D /* ShinyFormatter */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ShinyFormatter;
+		};
+		EE4004832DF1D1A400DE641D /* ShinyService */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ShinyService;
+		};
+		EE4004862DF1D40500DE641D /* ShinyModel */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ShinyModel;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 915DE28D2D64C538006DDDAC /* Project object */;
 }

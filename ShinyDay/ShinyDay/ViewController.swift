@@ -6,10 +6,10 @@
 //
 
 import UIKit
+import ShinyService
 
 class ViewController: UIViewController {
     
-    let api = WeatherApi()
     let manager = LocationManager()
     var topInset: CGFloat = 0.0
     
@@ -36,10 +36,17 @@ class ViewController: UIViewController {
         copyrightLabel.transform = CGAffineTransform(rotationAngle: -(CGFloat.pi) / 2)
         copyrightLabel.isHidden = true
         
+        NotificationCenter.default.addObserver(forName: .locationNameDidUpdate, object: nil, queue: .main) { [weak self] _ in
+            guard let self else {return}
+            self.locationNameLabel.text = self.manager.locationName
+            UIView.animate(withDuration: 0.3) {
+                self.locationNameLabel.alpha = 1.0
+            }
+        }
+        
         NotificationCenter.default.addObserver(forName: .weatherDataDidFetch, object: nil, queue: .main) { [weak self] _ in
             guard let self else {return}
             self.weatherCollectionView.reloadData()
-            
             UIView.animate(withDuration: 0.3) {
                 self.weatherCollectionView.alpha = 1.0
             }
