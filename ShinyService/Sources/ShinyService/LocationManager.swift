@@ -8,7 +8,7 @@
 import UIKit
 import CoreLocation
 
-public class LocationManager: NSObject {
+public class LocationManager: NSObject, @unchecked Sendable {
     let manager: CLLocationManager
     
     public var location: CLLocation?

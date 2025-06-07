@@ -9,7 +9,7 @@ import UIKit
 import ShinyFormatter
 import ShinyModel
 
-public class WeatherApi {
+public class WeatherApi: @unchecked Sendable {
     
     public enum Path: String {
         case weather = "data/2.5/weather" // 10분
