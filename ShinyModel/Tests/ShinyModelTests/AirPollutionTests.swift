@@ -1,0 +1,187 @@
+//
+//  AirPollutionTests.swift
+//  ShinyModel
+//
+//  Created by YoonieMac on 6/8/25.
+//
+
+import XCTest
+@testable import ShinyModel
+
+final class AirPollutionTests: XCTestCase {
+    // 유닛테스트에서는 서버에 직접접근하지 않고 대신에 JSON 문자열을 복사헤서 사용함
+    var jsonString: String!
+    var o3String: String!
+    var pm10String: String!
+    var pm25String: String!
+    var json: Data!
+    var decoder: JSONDecoder!
+    var airPollution: AirPollution!
+    
+    override func setUpWithError() throws {
+        jsonString = """
+            {
+                "coord": {
+                    "lon": 127.0214,
+                    "lat": 37.5714
+                },
+                "list": [
+                    {
+                        "main": {
+                            "aqi": 3
+                        },
+                        "components": {
+                            "co": 168.65,
+                            "no": 0.73,
+                            "no2": 9.03,
+                            "o3": 81.66,
+                            "so2": 2.27,
+                            "pm2_5": 28.12,
+                            "pm10": 30.95,
+                            "nh3": 2.14
+                        },
+                        "dt": 1749372121
+                    }
+                ]
+            }
+            """
+        json = jsonString.data(using: .utf8)
+        decoder = JSONDecoder()
+    }
+    
+    override func tearDownWithError() throws {
+        json = nil
+        decoder = nil
+        airPollution = nil
+    }
+    
+    // 디코딩을 미리하는 메서드 작성
+    // Unit Test에서는 !사용 권장(에러를 빨리 알아야 함)
+    func arrangeDecoding(aqi: Int? = nil, o3: Double? = nil, pm10: Double? = nil, pm2_5: Double? = nil) {
+        
+        var jsonString = self.jsonString
+        
+        if let aqi {
+            jsonString = self.jsonString.replacingOccurrences(of: "\"aqi\": 3", with: "\"aqi\": \(aqi)")
+            json = jsonString!.data(using: .utf8)!
+        }
+        
+        if let o3 {
+            o3String = self.jsonString.replacingOccurrences(of: "\"o3\": 81.66", with: "\"o3\": \(o3)")
+            json = jsonString!.data(using: .utf8)!
+        }
+        
+        if let pm10 {
+            pm10String = self.jsonString.replacingOccurrences(of: "\"pm10\": 30.95", with: "\"pm10\": \(pm10)")
+            json = jsonString!.data(using: .utf8)!
+        }
+        
+        if let pm2_5 {
+            pm25String = self.jsonString.replacingOccurrences(of: "\"pm2_5\": 28.12", with: "\"pm2_5\": \(pm2_5)")
+            json = jsonString!.data(using: .utf8)!
+        }
+        
+        airPollution = try! decoder.decode(AirPollution.self, from: json)
+    }
+    
+    // JSON타입에서 에러가 발생하는지만 확인->arrange / act 생략
+    func testJsonDecoder_succeeds() {
+        // assert
+        XCTAssertNoThrow(try decoder.decode(AirPollution.self, from: json))
+    }
+    
+    // infoList 속성 테스트(배열의 요소수, title)
+    func testInfoList_returnsArrayInExpectingOrder() {
+        // arrange
+        arrangeDecoding()
+        let expectedCount = 4
+        let expectedTitles = ["대기질", "오존", "미세먼지", "초미세먼지"]
+        // act
+        let actualCount = airPollution.infoList.count
+        let actualTitles = airPollution.infoList.map { $0.title }
+        // assert
+        XCTAssertEqual(expectedCount, actualCount)
+        XCTAssertEqual(expectedTitles, actualTitles)
+    }
+    
+    // infoList에서 대기질 테스트
+    // 이미지 비교시는 데이터 타입(pngData())을 비교해야 함. 그래야 개별 픽셀을 비교하게 되고 정확히 같은 이미지인지 비교 가능
+    func testInfoList_firstDataIsAQI() {
+        // arrange
+        arrangeDecoding(aqi: 3)
+        let expectedImage = UIImage(systemName: "aqi.medium")!.pngData()!
+        let expectedTitle = "대기질"
+        let expectedValue = "보통"
+        let expectedDescription = "AQI - 3"
+        // act
+        let actualImage = airPollution.infoList[0].image!.pngData()!
+        let actualTitle = airPollution.infoList[0].title
+        let actualValue = airPollution.infoList[0].value
+        let actualDescription = airPollution.infoList[0].description
+        // assert
+        XCTAssertEqual(expectedImage, actualImage)
+        XCTAssertEqual(expectedTitle, actualTitle)
+        XCTAssertEqual(expectedValue, actualValue)
+        XCTAssertEqual(expectedDescription, actualDescription)
+    }
+    
+    // 오존
+    func testInfoList_secondDataIsO3() {
+        // arrange
+        arrangeDecoding(o3: 81.66)
+        let expectedImage = UIImage(systemName: "aqi.medium")!.pngData()!
+        let expectedTitle = "오존"
+        let expectedValue = "81.7"
+        let expectedDescription = "O₃ - µg/m³"
+        // act
+        let actualImage = airPollution.infoList[1].image!.pngData()!
+        let actualTitle = airPollution.infoList[1].title
+        let actualValue = airPollution.infoList[1].value
+        let actualDescription = airPollution.infoList[1].description
+        // assert
+        XCTAssertEqual(expectedImage, actualImage)
+        XCTAssertEqual(expectedTitle, actualTitle)
+        XCTAssertEqual(expectedValue, actualValue)
+        XCTAssertEqual(expectedDescription, actualDescription)
+    }
+    
+    // 미세먼지
+    func testInfoList_thirdDataIsPM10() {
+        // arrange
+        arrangeDecoding(pm10: 30.95)
+        let expectedImage = UIImage(systemName: "aqi.medium")!.pngData()!
+        let expectedTitle = "미세먼지"
+        let expectedValue = "31"
+        let expectedDescription = "PM10 - µg/m³"
+        // act
+        let actualImage = airPollution.infoList[2].image!.pngData()!
+        let actualTitle = airPollution.infoList[2].title
+        let actualValue = airPollution.infoList[2].value
+        let actualDescription = airPollution.infoList[2].description
+        // assert
+        XCTAssertEqual(expectedImage, actualImage)
+        XCTAssertEqual(expectedTitle, actualTitle)
+        XCTAssertEqual(expectedValue, actualValue)
+        XCTAssertEqual(expectedDescription, actualDescription)
+    }
+    
+    // 초미세먼지
+    func testInfoList_fourthDataIsPM25() {
+        // arrange
+        arrangeDecoding(pm2_5: 28.12)
+        let expectedImage = UIImage(systemName: "aqi.medium")!.pngData()!
+        let expectedTitle = "초미세먼지"
+        let expectedValue = "28.1"
+        let expectedDescription = "PM2.5 - µg/m³"
+        // act
+        let actualImage = airPollution.infoList[3].image!.pngData()!
+        let actualTitle = airPollution.infoList[3].title
+        let actualValue = airPollution.infoList[3].value
+        let actualDescription = airPollution.infoList[3].description
+        // assert
+        XCTAssertEqual(expectedImage, actualImage)
+        XCTAssertEqual(expectedTitle, actualTitle)
+        XCTAssertEqual(expectedValue, actualValue)
+        XCTAssertEqual(expectedDescription, actualDescription)
+    }
+}
