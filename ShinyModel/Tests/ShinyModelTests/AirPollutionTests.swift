@@ -88,6 +88,7 @@ final class AirPollutionTests: DecodableTests<AirPollution> {
         numFormatter.maximumFractionDigits = 1
     }
     
+    
     // infoList 속성 테스트(배열의 요소수, title)
     func testInfoList_returnsArrayInExpectingOrder() {
         // arrange
