@@ -17,6 +17,7 @@ final class AirPollutionTests: XCTestCase {
     var json: Data!
     var decoder: JSONDecoder!
     var airPollution: AirPollution!
+    var numFormatter: NumberFormatter!
     
     override func setUpWithError() throws {
         jsonString = """
@@ -53,6 +54,7 @@ final class AirPollutionTests: XCTestCase {
         json = nil
         decoder = nil
         airPollution = nil
+        numFormatter = nil
     }
     
     // 디코딩을 미리하는 메서드 작성
@@ -67,21 +69,27 @@ final class AirPollutionTests: XCTestCase {
         }
         
         if let o3 {
-            o3String = self.jsonString.replacingOccurrences(of: "\"o3\": 81.66", with: "\"o3\": \(o3)")
+            jsonString = self.jsonString.replacingOccurrences(of: "\"o3\": 81.66", with: "\"o3\": \(o3)")
             json = jsonString!.data(using: .utf8)!
         }
         
         if let pm10 {
-            pm10String = self.jsonString.replacingOccurrences(of: "\"pm10\": 30.95", with: "\"pm10\": \(pm10)")
+            jsonString = self.jsonString.replacingOccurrences(of: "\"pm10\": 30.95", with: "\"pm10\": \(pm10)")
             json = jsonString!.data(using: .utf8)!
         }
         
         if let pm2_5 {
-            pm25String = self.jsonString.replacingOccurrences(of: "\"pm2_5\": 28.12", with: "\"pm2_5\": \(pm2_5)")
+            jsonString = self.jsonString.replacingOccurrences(of: "\"pm2_5\": 28.12", with: "\"pm2_5\": \(pm2_5)")
             json = jsonString!.data(using: .utf8)!
         }
         
         airPollution = try! decoder.decode(AirPollution.self, from: json)
+    }
+    
+    // valueString을 반영하는 formatter 생성
+    func arrangeValueFormatter() {
+        numFormatter = NumberFormatter()
+        numFormatter.maximumFractionDigits = 1
     }
     
     // JSON타입에서 에러가 발생하는지만 확인->arrange / act 생략
@@ -183,5 +191,52 @@ final class AirPollutionTests: XCTestCase {
         XCTAssertEqual(expectedTitle, actualTitle)
         XCTAssertEqual(expectedValue, actualValue)
         XCTAssertEqual(expectedDescription, actualDescription)
+    }
+    func testAqiString_returnsDescriptiveString() {
+        for aqi in 1...6 {
+            // arrange
+            arrangeDecoding(aqi: aqi)
+            let expected = ["좋음", "보통", "보통", "나쁨", "매우 나쁨", "--"][aqi - 1]
+            // act
+            let actual = airPollution.aqiString
+            // assert
+            XCTAssertEqual(expected, actual)
+        }
+    }
+    
+    func testO3String_returnsValueString() {
+        // arrange
+        let randomValue = Double.random(in: 0.01...0.99)
+        arrangeDecoding(o3: randomValue)
+        arrangeValueFormatter()
+        let expected = numFormatter.string(for: randomValue)!
+        // act
+        let actual = airPollution.o3String
+        // assert
+        XCTAssertEqual(expected, actual)
+    }
+    
+    func testPm10String_returnsValueString() {
+        // arrange
+        let randomValue = Double.random(in: 0.01...0.99)
+        arrangeDecoding(pm10: randomValue)
+        arrangeValueFormatter()
+        let expected = numFormatter.string(for: randomValue)
+        // act
+        let actual = airPollution.pm10String
+        // assert
+        XCTAssertEqual(expected, actual)
+    }
+    
+    func testPm25String_returnsValueString() {
+        // arrange
+        let randomValue = Double.random(in: 0.01...0.99)
+        arrangeDecoding(pm2_5: randomValue)
+        arrangeValueFormatter()
+        let expected = numFormatter.string(for: randomValue)!
+        // act
+        let actual = airPollution.pm25String
+        // assert
+        XCTAssertEqual(expected, actual)
     }
 }
