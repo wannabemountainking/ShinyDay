@@ -12,6 +12,7 @@ import CoreLocation
 final class LocationManagerTests: XCTestCase {
     
     // 생성자에서 잘 초기화하는지
+    // test double에서 dummy 사용해서 구현
     func testInit_initializeProperly() {
         // arrange
         let dummy = DummyLocationManager()
@@ -31,4 +32,20 @@ final class LocationManagerTests: XCTestCase {
         XCTAssertIdentical(dummy.delegate, systemUnderTest)
     }
     
+    // test double 중에 spy를 사용해서 구현
+    func testInit_callsWhenInUse() {
+        // arrange
+        //  test 메서드에서 spy 객체를 생성하면 spy객체를 생성하고 spy 객체의 속성 requestWhenInUseCalled는 false가 됨.
+        let spy = LocationManagerSpy()
+        // act
+        //  그리고 LocationManager의 생성자가 동작하여 spy.requestWhenInUseAuthorization()이 호출되어 requestWhenInUseCalled는 true가 됨.
+        let _ = LocationManager(locationManager: spy)
+        // assert
+        XCTAssertTrue(spy.requestWhenInUseCalled)
+    }
 }
+
+/*
+ spy처럼 메소드의 호출 여부나 호출 횟수를 검증하는 것을 행동관찰이라고 함
+ 
+ */
