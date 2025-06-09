@@ -8,8 +8,18 @@
 import UIKit
 import CoreLocation
 
+public protocol LocationManaging: AnyObject {
+    var distanceFilter: CLLocationDistance {get set}
+    var desiredAccuracy: CLLocationAccuracy {get set}
+    var delegate: (any CLLocationManagerDelegate)? {get set}
+    
+    func requestWhenInUseAuthorization()
+}
+
+extension CLLocationManager: LocationManaging {}
+
 public class LocationManager: NSObject, @unchecked Sendable {
-    let manager: CLLocationManager
+    let manager: LocationManaging
     
     public var location: CLLocation?
     public var locationName: String?
@@ -29,9 +39,9 @@ public class LocationManager: NSObject, @unchecked Sendable {
         }
     }
     
-    public override init() {
+    public init(locationManager: LocationManaging = CLLocationManager()) {
         
-        manager = CLLocationManager()
+        manager = locationManager
         
         manager.distanceFilter = 1000
         manager.desiredAccuracy = kCLLocationAccuracyKilometer
