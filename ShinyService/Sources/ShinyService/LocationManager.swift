@@ -20,6 +20,7 @@ extension CLLocationManager: LocationManaging {}
 
 public class LocationManager: NSObject, @unchecked Sendable {
     let manager: LocationManaging
+    private let userDefaults: UserDefaults
     
     public var location: CLLocation?
     public var locationName: String?
@@ -29,29 +30,30 @@ public class LocationManager: NSObject, @unchecked Sendable {
     //  CLLocation은 전체로 UserDefault에 저장할 수 없음(객체 힘듦) 그래서 위도 경도를 나눠서 저장해야 함
     public var lastLocation: CLLocation? {
         get {
-            guard let lat = UserDefaults.standard.object(forKey: "lastLocationLat") as? CLLocationDegrees,
-                  let lon = UserDefaults.standard.object(forKey: "lastLocationLon") as? CLLocationDegrees else {return nil}
+            guard let lat = userDefaults.object(forKey: "lastLocationLat") as? CLLocationDegrees,
+                  let lon = userDefaults.object(forKey: "lastLocationLon") as? CLLocationDegrees else {return nil}
             return CLLocation(latitude: lat, longitude: lon)
         }
         set {
-            UserDefaults.standard.set(newValue?.coordinate.latitude, forKey: "lastLocationLat")
-            UserDefaults.standard.set(newValue?.coordinate.longitude, forKey: "lastLocationLon")
+            userDefaults.set(newValue?.coordinate.latitude, forKey: "lastLocationLat")
+            userDefaults.set(newValue?.coordinate.longitude, forKey: "lastLocationLon")
         }
     }
     
-    public init(locationManager: LocationManaging = CLLocationManager()) {
+    public init(locationManager: LocationManaging = CLLocationManager(), userDefaults: UserDefaults = .standard) {
         
         manager = locationManager
         
         manager.distanceFilter = 1000
         manager.desiredAccuracy = kCLLocationAccuracyKilometer
+        self.userDefaults = userDefaults
         
         super.init()
         manager.delegate = self
         manager.requestWhenInUseAuthorization()
         
         guard let savedLocation = lastLocation else {return}
-        locationUpdate(currentLocation: savedLocation)
+        update(currentLocation: savedLocation)
     }
     
 }
@@ -76,7 +78,7 @@ extension LocationManager: CLLocationManagerDelegate {
         manager.stopUpdatingLocation()
     }
     
-    func locationUpdate(currentLocation: CLLocation) {
+    @objc func update(currentLocation: CLLocation) {
         Task {
             await updateLocationName(location: currentLocation)
             NotificationCenter.default.post(name: .locationNameDidUpdate, object: nil)
@@ -122,7 +124,7 @@ extension LocationManager: CLLocationManagerDelegate {
         guard let currentLocation = locations.last else {return}
         location = currentLocation
         
-        locationUpdate(currentLocation: currentLocation)
+        update(currentLocation: currentLocation)
         lastLocation = currentLocation
 
     }
