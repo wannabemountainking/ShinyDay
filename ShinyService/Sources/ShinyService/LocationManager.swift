@@ -16,11 +16,23 @@ public protocol LocationManaging: AnyObject {
     func requestWhenInUseAuthorization()
 }
 
+public protocol Geocodable {
+    func reverseGeocodeLocation(_ location: CLLocation, preferredLocale locale: Locale?) async throws -> [PlacemarkType]
+}
+
+extension CLGeocoder: Geocodable {
+    public func reverseGeocodeLocation(_ location: CLLocation, preferredLocale locale: Locale?) async throws -> [PlacemarkType] {
+        let list: [CLPlacemark] = try await reverseGeocodeLocation(location, preferredLocale: locale)
+        return list as [PlacemarkType]
+    }
+}
+
 extension CLLocationManager: LocationManaging {}
 
 public class LocationManager: NSObject, @unchecked Sendable {
     let manager: LocationManaging
     private let userDefaults: UserDefaults
+    private let geocoder: Geocodable
     
     public var location: CLLocation?
     public var locationName: String?
@@ -40,13 +52,14 @@ public class LocationManager: NSObject, @unchecked Sendable {
         }
     }
     
-    public init(locationManager: LocationManaging = CLLocationManager(), userDefaults: UserDefaults = .standard) {
+    public init(locationManager: LocationManaging = CLLocationManager(), userDefaults: UserDefaults = .standard, geocoder: Geocodable = CLGeocoder()) {
         
         manager = locationManager
         
         manager.distanceFilter = 1000
         manager.desiredAccuracy = kCLLocationAccuracyKilometer
         self.userDefaults = userDefaults
+        self.geocoder = geocoder
         
         super.init()
         manager.delegate = self
@@ -131,9 +144,12 @@ extension LocationManager: CLLocationManagerDelegate {
     
     func updateLocationName(location: CLLocation) async {
         do {
-            
-            let geocoder = CLGeocoder()
-            let placemarks = try await geocoder.reverseGeocodeLocation(location, preferredLocale: Locale(identifier: "ko_kr"))
+            // 여기서 reverseGeocodeLocation메서드는 우리가 만든 것이 아니라 프레임워크에서 제공하는 메서드이므로 우리가 만든 것으로 바꿔야 한다. 그 방법읍
+            // 위 메서드를 필수로 하는 Geocodable 프로토콜을 만들고,
+            // extension으로 CLGeocoder 클래스가 Geocodable 프로토콜을 채택하게 하고(LocationManager의 초기화에 Geocodable을 채택한 CLGeocoder 객체갸 필요함)
+            // 또한 StubCLGeocoder도 Geocodable을 채택해서 두 객체의 메서드를 사용할 수 있게 해야 함(만약 StubCLGeocoder가 CLGeocoder를 상속하면 동일한 이름의 메서드가 Geocodable의 필수 구현 메서드와 부합하여 둘 중 어떤 것을 써야 할 지 컴퓨터가 혼동하게 됨)
+            // 그러면 LocationManager의 속성인 geocoder의 타입은 StubGeocoder가 되어 geocoder.reverseGeocodeLocation메서드는 우리가 만든 StubCLGeocoder의 메서드를 사용하게됨.
+            let placemarks: [PlacemarkType] = try await geocoder.reverseGeocodeLocation(location, preferredLocale: Locale(identifier: "ko_kr"))
             if let place = placemarks.first {
                 if let name = place.name {
                     locationName = name
@@ -147,6 +163,7 @@ extension LocationManager: CLLocationManagerDelegate {
             }
         } catch {
             print(error)
+            locationName = "알 수 없음"
         }
     }
 }
@@ -157,3 +174,12 @@ public extension Notification.Name {
     static let backgroundImageDidDownload = Notification.Name("backgroundImageDidDownload")
     static let locationNameDidUpdate = Notification.Name("locationNameDidUpdate")
 }
+
+public protocol PlacemarkType {
+    var name: String? {get}
+    var locality: String? {get}
+    var subLocality: String? {get}
+    var description: String {get}
+}
+
+extension CLPlacemark: PlacemarkType {}

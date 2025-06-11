@@ -72,6 +72,106 @@ final class LocationManagerTests: XCTestCase {
         // assert
         XCTAssertTrue(spy.updateCurrentLocationCalled)
     }
+    
+    //updateLocationName 메서드 테스트(locationName 잘 설정되는지 확인
+    func testUpdateLocationName_setsLocationName() async {
+        // arrange
+        let stub = StubCLGeocoder()
+        let sut = LocationManager(geocoder: stub)
+        let location = CLLocation(latitude: 12, longitude: 34)
+        // act
+        await sut.updateLocationName(location: location)
+        // assert
+        XCTAssertNotNil(sut.locationName)
+    }
+    
+    // updateLocationName 메서드에서 placemark의 속성 name이 있을때 locationName이 placemark.name과 같은지
+    func testUpdateLocationName_ifNameIsNotNil_locationNameEqualsName() async {
+        // arrange
+        let expectedLocationName = "신도림역"
+        let stub = StubCLGeocoder(name: expectedLocationName)
+        let sut = LocationManager(geocoder: stub)
+        let location = CLLocation(latitude: 12, longitude: 34)
+        // act
+        await sut.updateLocationName(location: location)
+        // assert
+        XCTAssertEqual(expectedLocationName, sut.locationName)
+    }
+    
+    // Placemark의 locality 검사
+    
+    func testUpdateLocationName_ifLocalityIsNotNil_locationNameEqualsLocality() async {
+        // arrange
+        let expectedLocationName = "강남구"
+        let stub = StubCLGeocoder(locality: expectedLocationName)
+        let sut = LocationManager(geocoder: stub)
+        let location = CLLocation(latitude: 12, longitude: 34)
+        // act
+        await sut.updateLocationName(location: location)
+        // assert
+        XCTAssertEqual(expectedLocationName, sut.locationName)
+    }
+    
+    // Placemark의 subLocality 검사
+    func testUpdateLocationName_ifSubLocalityIsNotNil_locationNameEqualsLocalityPlusSubLocality() async {
+        // arrange
+        let expectedLocalityPlusSubLocationName = "강남구 역삼동"
+        let localityList = expectedLocalityPlusSubLocationName.components(separatedBy: " ")
+        let stub = StubCLGeocoder(locality: localityList.first ?? "", subLocality: localityList.last ?? "")
+        
+        let sut = LocationManager(geocoder: stub)
+        let location = CLLocation(latitude: 12, longitude: 34)
+        // act
+        await sut.updateLocationName(location: location)
+        // assert
+        XCTAssertEqual(expectedLocalityPlusSubLocationName, sut.locationName)
+    }
+    
+    // locality와 sublocality가 모두 nil일때
+    // Placemark의 subLocality 검사
+    func testUpdateLocationName_ifOnlyDescriptionIsNotNil_locationNameEqualsDescription() async {
+        // arrange
+        let expectedLocationName = "강남대로"
+
+        let stub = StubCLGeocoder(descriptionStr: expectedLocationName)
+        
+        let sut = LocationManager(geocoder: stub)
+        let location = CLLocation(latitude: 12, longitude: 34)
+        // act
+        await sut.updateLocationName(location: location)
+        // assert
+        XCTAssertEqual(expectedLocationName, sut.locationName)
+    }
+    
+    // StubGeocoder에서 placemark의 속성들의 비열이 모두 비어있을 때
+    func testUpdateLocationName_ifPlacemarkIsEmpty_locationNameEqualsUnknown() async {
+        // arrange
+        let expectedLocationName = "알 수 없음"
+
+        let stub = StubCLGeocoder(returnsEmptyArray: true)
+        
+        let sut = LocationManager(geocoder: stub)
+        let location = CLLocation(latitude: 12, longitude: 34)
+        // act
+        await sut.updateLocationName(location: location)
+        // assert
+        XCTAssertEqual(expectedLocationName, sut.locationName)
+    }
+    
+    // updateLocationName 메서드의 catch블럭 테스트
+    func testUpdateLocationName_ifThrowsError_locationNameEqualsUnknown() async {
+        // arrange
+        let expectedLocationName = "알 수 없음"
+
+        let stub = StubCLGeocoder(throwsError: true)
+        
+        let sut = LocationManager(geocoder: stub)
+        let location = CLLocation(latitude: 12, longitude: 34)
+        // act
+        await sut.updateLocationName(location: location)
+        // assert
+        XCTAssertEqual(expectedLocationName, sut.locationName)
+    }
 }
 
 
