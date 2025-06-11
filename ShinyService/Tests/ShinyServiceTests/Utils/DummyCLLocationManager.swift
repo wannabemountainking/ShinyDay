@@ -11,11 +11,15 @@ import CoreLocation
 
 // 테스트에서 dummy는 실제 기능이 없이 interface만 충족시키는 비어있는 객체 = 모든 속성은 default값
 class DummyCLLocationManager: LocationManaging {
+
     var distanceFilter: CLLocationDistance = kCLDistanceFilterNone
     var desiredAccuracy: CLLocationAccuracy = kCLLocationAccuracyBest
     var delegate: (any CLLocationManagerDelegate)?
+    var authorizationStatus: CLAuthorizationStatus
+    = .notDetermined
     
     func requestWhenInUseAuthorization() {}
+    func startUpdatingLocation() {}
 }
 
 /*

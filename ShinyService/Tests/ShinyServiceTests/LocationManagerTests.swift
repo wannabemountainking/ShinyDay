@@ -132,7 +132,7 @@ final class LocationManagerTests: XCTestCase {
     func testUpdateLocationName_ifOnlyDescriptionIsNotNil_locationNameEqualsDescription() async {
         // arrange
         let expectedLocationName = "강남대로"
-
+        
         let stub = StubCLGeocoder(descriptionStr: expectedLocationName)
         
         let sut = LocationManager(geocoder: stub)
@@ -147,7 +147,7 @@ final class LocationManagerTests: XCTestCase {
     func testUpdateLocationName_ifPlacemarkIsEmpty_locationNameEqualsUnknown() async {
         // arrange
         let expectedLocationName = "알 수 없음"
-
+        
         let stub = StubCLGeocoder(returnsEmptyArray: true)
         
         let sut = LocationManager(geocoder: stub)
@@ -162,7 +162,7 @@ final class LocationManagerTests: XCTestCase {
     func testUpdateLocationName_ifThrowsError_locationNameEqualsUnknown() async {
         // arrange
         let expectedLocationName = "알 수 없음"
-
+        
         let stub = StubCLGeocoder(throwsError: true)
         
         let sut = LocationManager(geocoder: stub)
@@ -171,6 +171,74 @@ final class LocationManagerTests: XCTestCase {
         await sut.updateLocationName(location: location)
         // assert
         XCTAssertEqual(expectedLocationName, sut.locationName)
+    }
+    
+    // CLLocationManagerDelegate에서 AuthorizationStatus가 .notDetermined일 떼
+    func testDelegate_ifAuthorizationStatusIsNotDetermined_callsReturnWhenInUse() {
+        // arrange
+        let spy = CLLocationManagerSpy(stubbedAuthorizationStatus: .notDetermined)
+        let sut = MockLocationManager(locationManager: spy)
+        // act: Delegate 메서드는 원래 자동 호출되지만 테스트에서는 우리가 직접해야 함
+        sut.locationManagerDidChangeAuthorization(spy)
+        
+        // assert
+        XCTAssertTrue(spy.requestWhenInUseCalled)
+        XCTAssertEqual(2, spy.requestWhenInUseCallCount)
+        XCTAssertFalse(spy.startUpdatingLocationCalled)
+    }
+    
+    // 로케이션메니저가 허가된 상태에서 startUpdatingLocation 메서드가 작동하는지
+    func testDelegate_ifAuthorizationStatusIsAuthorized_callsStartUpdatingLocation() {
+        for status in [CLAuthorizationStatus.authorizedAlways, .authorizedWhenInUse] {
+            // arrange
+            let spy = CLLocationManagerSpy(stubbedAuthorizationStatus: status)
+            let sut = MockLocationManager(locationManager: spy)
+            // act
+            sut.locationManagerDidChangeAuthorization(spy)
+            
+            // assert
+            XCTAssertEqual(1, spy.requestWhenInUseCallCount)
+            XCTAssertTrue(spy.startUpdatingLocationCalled)
+        }
+    }
+    
+    // authorizationStatus가 notAuthorized, Error 일때
+    func testDelegate_ifAuthorizationStatusIsNotAuthorizedOrError_callsNothing() {
+        for status in [CLAuthorizationStatus.denied, .restricted] {
+            // arrange
+            let spy = CLLocationManagerSpy(stubbedAuthorizationStatus: .denied)
+            let sut = MockLocationManager(locationManager: spy)
+            // act
+            sut.locationManagerDidChangeAuthorization(spy)
+            // assert
+            XCTAssertEqual(1, spy.requestWhenInUseCallCount)
+            XCTAssertFalse(spy.startUpdatingLocationCalled)
+        }
+    }
+    
+    // delegate 중 didFailWithError 테스트
+    func testDidFailWithError_ifErrorCodeIsUnknown_callsNothing() {
+        // arrange
+        let spy = CLLocationManagerSpy()
+        let sut = MockLocationManager(locationManager: spy)
+        let error = NSError(domain: kCLErrorDomain, code: CLError.Code.locationUnknown.rawValue)
+        // act
+        sut.locationManager(spy, didFailWithError: error)
+        print(spy.stopUpdatingLocationCalled)
+        // assert
+        XCTAssertFalse(spy.stopUpdatingLocationCalled)
+    }
+    
+    func testDidFailWithError_ifErrorCodeIsNotUnknown_callsStopUpdatingLocation() {
+        // arrange
+        let spy = CLLocationManagerSpy()
+        let sut = MockLocationManager(locationManager: spy)
+        let error = NSError(domain: kCLErrorDomain, code: CLError.Code.locationUnknown.rawValue)
+        // act
+        sut.locationManager(spy, didFailWithError: error)
+        print(spy.stopUpdatingLocationCalled)
+        // assert
+        XCTAssertFalse(spy.stopUpdatingLocationCalled)
     }
 }
 

@@ -12,8 +12,10 @@ public protocol LocationManaging: AnyObject {
     var distanceFilter: CLLocationDistance {get set}
     var desiredAccuracy: CLLocationAccuracy {get set}
     var delegate: (any CLLocationManagerDelegate)? {get set}
+    var authorizationStatus: CLAuthorizationStatus {get}
     
     func requestWhenInUseAuthorization()
+    func startUpdatingLocation()
 }
 
 public protocol Geocodable {
@@ -76,6 +78,7 @@ extension LocationManager: CLLocationManagerDelegate {
         switch manager.authorizationStatus {
         case .notDetermined:
             manager.requestWhenInUseAuthorization()
+            break
         case .authorizedAlways, .authorizedWhenInUse:
 //            manager.requestLocation() // 베터리 절약
             manager.startUpdatingLocation()
@@ -86,7 +89,7 @@ extension LocationManager: CLLocationManagerDelegate {
     
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         let error = error as NSError
-        guard error.code == CLError.Code.locationUnknown.rawValue else {return}
+        guard error.code != CLError.Code.locationUnknown.rawValue else {return}
         print(error.code)
         manager.stopUpdatingLocation()
     }

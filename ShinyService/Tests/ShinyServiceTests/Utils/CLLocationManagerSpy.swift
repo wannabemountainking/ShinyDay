@@ -15,11 +15,37 @@ import CoreLocation
  여기에서의 spy는 dummy와 같이 프로토콜 구현 필요(1. 새로운 class 만들수도 있고 2. 상속해도 됨)
  */
 
-class CLLocationManagerSpy: DummyCLLocationManager {
+class CLLocationManagerSpy: CLLocationManager {
+    var stubbedAuthorizationStatus: CLAuthorizationStatus
+    
     var requestWhenInUseCalled = false
+    var startUpdatingLocationCalled = false
+    var requestWhenInUseCallCount = 0
+    var stopUpdatingLocationCalled = false
+    
+    init(stubbedAuthorizationStatus: CLAuthorizationStatus = .notDetermined, requestWhenInUseCalled: Bool = false, startUpdatingLocationCalled: Bool = false,
+        stopUpdatingLocationCalled: Bool = false) {
+        self.stubbedAuthorizationStatus = stubbedAuthorizationStatus
+        self.requestWhenInUseCalled = requestWhenInUseCalled
+        self.startUpdatingLocationCalled = startUpdatingLocationCalled
+        self.stopUpdatingLocationCalled = stopUpdatingLocationCalled
+    }
+    
+    override var authorizationStatus: CLAuthorizationStatus {
+        return stubbedAuthorizationStatus
+    }
     
     override func requestWhenInUseAuthorization() {
         requestWhenInUseCalled = true
+        requestWhenInUseCallCount += 1
+    }
+    
+    override func startUpdatingLocation() {
+        startUpdatingLocationCalled = true
+    }
+    
+    override func stopUpdatingLocation() {
+        stopUpdatingLocationCalled = true
     }
 }
 
