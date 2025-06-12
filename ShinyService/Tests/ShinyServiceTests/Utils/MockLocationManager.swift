@@ -12,6 +12,26 @@ import CoreLocation
 // 서브클래싱 방식으로 Test Double -> Spy
 class MockLocationManager: LocationManager, @unchecked Sendable {
     
+    // update가 순서대로 되는지 보여주는 코드
+    var order = [String]()
+    
+    override var location: CLLocation? {
+        didSet {
+            order.append("location")
+        }
+    }
+    
+    override var lastLocation: CLLocation? {
+        didSet {
+            order.append("lastLocation")
+        }
+    }
+    
+    override func update(currentLocation: CLLocation) {
+        order.append(#function)
+        super.update(currentLocation: currentLocation)
+    }
+    
 }
 
 /*

@@ -10,3 +10,11 @@ import Foundation
 
 let apiKey = "b806f37af8d3b35c2646a93ce82d5c3b"
 let unsplashClientId = "Client-ID 1iQ2UKtX4fDwsumnUmlwEe4_gyldxSunOSpiCRiKThY"
+
+public enum ApiError: Error {
+    case invalidUrl(String)
+    case unknown
+    case invalidResponse
+    case failed(Int)
+    case emptyData
+}

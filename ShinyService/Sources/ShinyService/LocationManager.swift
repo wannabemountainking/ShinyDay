@@ -118,32 +118,10 @@ extension LocationManager: CLLocationManagerDelegate {
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let currentLocation = locations.last {
             location = currentLocation
-            
-            Task {
-                await updateLocationName(location: currentLocation)
-                NotificationCenter.default.post(name: .locationNameDidUpdate, object: nil)
-            }
-            
-            Task {
-                try await api.fetch(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude)
-                NotificationCenter.default.post(name: .weatherDataDidFetch, object: nil)
-            }
-            
-            Task {
-                let location = try await self.api.fetchLocation(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude)
-                let url = try await self.api.fetchRandomImage(city: location)
-                backgroundImage = try await self.api.downloadImage(from: url)
-                
-                NotificationCenter.default.post(name: .backgroundImageDidDownload, object: nil)
-            }
+            lastLocation = currentLocation
+            update(currentLocation: currentLocation)
         }
-        guard let currentLocation = locations.last else {return}
-        location = currentLocation
-        
-        update(currentLocation: currentLocation)
-        lastLocation = currentLocation
-
-    }
+    } // 순서가 제대로인지 확인하는 테스트 필요
     
     func updateLocationName(location: CLLocation) async {
         do {

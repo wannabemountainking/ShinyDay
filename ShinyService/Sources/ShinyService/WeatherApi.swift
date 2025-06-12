@@ -11,81 +11,59 @@ import ShinyModel
 
 public class WeatherApi: @unchecked Sendable {
     
-    public enum Path: String {
-        case weather = "data/2.5/weather" // 10분
-        case forecast = "data/2.5/forecast" // 3시간
-        case air_pollution = "data/2.5/air_pollution" // 10분
-        case reverseGeocoding = "geo/1.0/reverse" // 위치가 바뀔 때까지
-    }
-    
     public var summary: CurrentWeather?
     public var forecastList = [ForecastData]()
     public var detailInfo = [DetailInfo]()
     public var copyright: String?
     
-    private func cachePolicyFor(path: Path, lat: Double, lon: Double) -> URLRequest.CachePolicy {
-        let key = path.rawValue.appending("\(lat)").appending("\(lon)")
-        switch path {
-        case Path.weather, Path.air_pollution:
+    private func cachePolicyFor(endpoint: Endpoint, cacheKey key: String? = nil) -> URLRequest.CachePolicy {
+        switch endpoint {
+        case Endpoint.weather, Endpoint.air_pollution:
+            guard let key else {break}
             if let date = UserDefaults.standard.object(forKey: key) as? Date {
                 if date.timeIntervalSinceNow >= -600 {
                     return .returnCacheDataElseLoad
                 }
             }
             UserDefaults.standard.set(Date(), forKey: key)
-        case Path.forecast:
+        case Endpoint.forecast:
+            guard let key else {break}
             if let date = UserDefaults.standard.object(forKey: key) as? Date {
                 if date.timeIntervalSinceNow >= -3600 * 3 {
                     return .returnCacheDataElseLoad
                 }
             }
             UserDefaults.standard.set(Date(), forKey: key)
-        case Path.reverseGeocoding:
+        case Endpoint.reverseGeocoding:
             return .returnCacheDataElseLoad
+        default:
+            break
         }
         return .useProtocolCachePolicy
     }
     
-    private func fetch<ParsingType: Codable>(path: Path, lat: Double, lon: Double) async throws -> ParsingType {
-        guard var url = URL(string: "https://api.openweathermap.org/\(path.rawValue)") else {
-            throw ApiError.invalidUrl("invalid url")
-        }
-        
-        if #available(iOS 16.0, *) {
-            url.append(queryItems: [
-                URLQueryItem(name: "lat", value: "\(lat)"),
-                URLQueryItem(name: "lon", value: "\(lon)"),
-                URLQueryItem(name: "appid", value: apiKey),
-                URLQueryItem(name: "units", value: "metric"),
-                URLQueryItem(name: "lang", value: "kr")
-            ])
-        } else {
-            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            components?.queryItems = [
-                URLQueryItem(name: "lat", value: "\(lat)"),
-                URLQueryItem(name: "lon", value: "\(lon)"),
-                URLQueryItem(name: "appid", value: apiKey),
-                URLQueryItem(name: "units", value: "metric"),
-                URLQueryItem(name: "lang", value: "kr")
-            ]
-            url = components?.url ?? url
-        }
-        
-        var request = URLRequest(url: url)
-        request.cachePolicy = cachePolicyFor(path: path, lat: lat, lon: lon)
+    private func fetch<ParsingType: Codable>(endpoint: Endpoint, queryItems: [String: Any] = [:], cacheKey key: String? = nil) async throws -> ParsingType {
+        var request = try endpoint.request(customQueryItems: queryItems)
+        request.cachePolicy = cachePolicyFor(endpoint: endpoint, cacheKey: key)
         
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {throw ApiError.invalidResponse}
-        print(path.rawValue.padding(toLength: 30, withPad: " ", startingAt: 0), httpResponse.value(forHTTPHeaderField: "Date") ?? "")
         guard httpResponse.statusCode == 200 else {throw ApiError.failed(httpResponse.statusCode)}
         
         return try JSONDecoder().decode(ParsingType.self, from: data)
     }
     
     public func fetch(lat: Double, lon: Double) async throws {
-        async let weatherResponse: CurrentWeather = fetch(path: Path.weather, lat: lat, lon: lon)
-        async let forecastResponse: Forecast = fetch(path: .forecast, lat: lat, lon: lon)
-        async let airPollutionResponse: AirPollution = fetch(path: .air_pollution, lat: lat, lon: lon)
+        
+        let queryItems = ["lat": lat, "lon": lon]
+        let weatherCacheKey = Endpoint.weather.path.appending("\(lat)").appending("\(lon)")
+        let forecastCacheKey = Endpoint.forecast.path.appending("\(lat)").appending("\(lon)")
+        let airPollutionCacheKey = Endpoint.air_pollution.path.appending("\(lat)").appending("\(lon)")
+        
+        // 빈 객체만 저장하고 나중에 실제 값을 채울 수 있다.
+        async let weatherResponse: CurrentWeather = fetch(endpoint: Endpoint.weather, queryItems: queryItems, cacheKey: weatherCacheKey)
+        async let forecastResponse: Forecast = fetch(endpoint: .forecast, queryItems: queryItems, cacheKey: forecastCacheKey)
+        async let airPollutionResponse: AirPollution = fetch(endpoint: .air_pollution,queryItems: queryItems, cacheKey: airPollutionCacheKey)
         
         let (weather, forecast, airPollution) = try await (weatherResponse, forecastResponse, airPollutionResponse)
         
@@ -121,38 +99,15 @@ public class WeatherApi: @unchecked Sendable {
     }
     
     public func fetchLocation(lat: Double, lon: Double) async throws -> String {
-        let locations: [Location] = try await fetch(path: .reverseGeocoding, lat: lat, lon: lon)
+        let locations: [Location] = try await fetch(endpoint: .reverseGeocoding, queryItems: ["lat":lat, "lon": lon])
         return locations.first?.name ?? ""
 
     }
     
     public func fetchRandomImage(city: String) async throws -> URL {
-        guard var url = URL(string: "https://api.unsplash.com/photos/random") else {throw ApiError.invalidUrl("https://api.unsplash.com/photos/random")}
-        
-        if #available(iOS 16.0, *) {
-            url.append(queryItems: [
-                URLQueryItem(name: "query", value: city),
-                URLQueryItem(name: "orientation", value: "portrait")
-            ])
-        } else {
-            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            components?.queryItems = [
-                URLQueryItem(name: "query", value: city),
-                URLQueryItem(name: "orientation", value: "portrait")
-            ]
-            url = components?.url ?? url
-        }
-        
-        var request = URLRequest(url: url)
-        request.addValue(unsplashClientId, forHTTPHeaderField: "Authorization")
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse else {throw ApiError.invalidResponse}
-        guard httpResponse.statusCode == 200 else {throw ApiError.failed(httpResponse.statusCode)}
-        
-        let decodedData = try JSONDecoder().decode(BackgroundImage.self, from: data)
-        self.copyright = "© \(decodedData.user.userName)"
-        return decodedData.urls.regular
+        let result: BackgroundImage = try await fetch(endpoint: .randomImage, queryItems: ["query": city])
+        self.copyright = "© \(result.user.userName)"
+        return result.urls.regular
     }
     
     public func downloadImage(from url: URL) async throws -> UIImage {
