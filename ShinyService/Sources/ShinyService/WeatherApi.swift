@@ -16,35 +16,14 @@ public class WeatherApi: @unchecked Sendable {
     public var detailInfo = [DetailInfo]()
     public var copyright: String?
     
-    private func cachePolicyFor(endpoint: Endpoint, cacheKey key: String? = nil) -> URLRequest.CachePolicy {
-        switch endpoint {
-        case Endpoint.weather, Endpoint.air_pollution:
-            guard let key else {break}
-            if let date = UserDefaults.standard.object(forKey: key) as? Date {
-                if date.timeIntervalSinceNow >= -600 {
-                    return .returnCacheDataElseLoad
-                }
-            }
-            UserDefaults.standard.set(Date(), forKey: key)
-        case Endpoint.forecast:
-            guard let key else {break}
-            if let date = UserDefaults.standard.object(forKey: key) as? Date {
-                if date.timeIntervalSinceNow >= -3600 * 3 {
-                    return .returnCacheDataElseLoad
-                }
-            }
-            UserDefaults.standard.set(Date(), forKey: key)
-        case Endpoint.reverseGeocoding:
-            return .returnCacheDataElseLoad
-        default:
-            break
-        }
-        return .useProtocolCachePolicy
+    let userDefaults: UserDefaults
+    
+    init(userDefaults: UserDefaults = .standard) {
+        self.userDefaults = userDefaults
     }
     
-    private func fetch<ParsingType: Codable>(endpoint: Endpoint, queryItems: [String: Any] = [:], cacheKey key: String? = nil) async throws -> ParsingType {
-        var request = try endpoint.request(customQueryItems: queryItems)
-        request.cachePolicy = cachePolicyFor(endpoint: endpoint, cacheKey: key)
+    private func fetch<ParsingType: Codable>(endpoint: Endpoint, queryItems: [String: Any] = [:]) async throws -> ParsingType {
+        let request = try endpoint.request(customQueryItems: queryItems)
         
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {throw ApiError.invalidResponse}
@@ -55,15 +34,10 @@ public class WeatherApi: @unchecked Sendable {
     
     public func fetch(lat: Double, lon: Double) async throws {
         
-        let queryItems = ["lat": lat, "lon": lon]
-        let weatherCacheKey = Endpoint.weather.path.appending("\(lat)").appending("\(lon)")
-        let forecastCacheKey = Endpoint.forecast.path.appending("\(lat)").appending("\(lon)")
-        let airPollutionCacheKey = Endpoint.air_pollution.path.appending("\(lat)").appending("\(lon)")
-        
         // 빈 객체만 저장하고 나중에 실제 값을 채울 수 있다.
-        async let weatherResponse: CurrentWeather = fetch(endpoint: Endpoint.weather, queryItems: queryItems, cacheKey: weatherCacheKey)
-        async let forecastResponse: Forecast = fetch(endpoint: .forecast, queryItems: queryItems, cacheKey: forecastCacheKey)
-        async let airPollutionResponse: AirPollution = fetch(endpoint: .air_pollution,queryItems: queryItems, cacheKey: airPollutionCacheKey)
+        async let weatherResponse: CurrentWeather = fetch(endpoint: Endpoint.weather(lat, lon, userDefaults))
+        async let forecastResponse: Forecast = fetch(endpoint: .forecast(lat, lon, userDefaults))
+        async let airPollutionResponse: AirPollution = fetch(endpoint: .air_pollution(lat, lon, userDefaults))
         
         let (weather, forecast, airPollution) = try await (weatherResponse, forecastResponse, airPollutionResponse)
         
@@ -99,13 +73,13 @@ public class WeatherApi: @unchecked Sendable {
     }
     
     public func fetchLocation(lat: Double, lon: Double) async throws -> String {
-        let locations: [Location] = try await fetch(endpoint: .reverseGeocoding, queryItems: ["lat":lat, "lon": lon])
+        let locations: [Location] = try await fetch(endpoint: .reverseGeocoding(lat, lon))
         return locations.first?.name ?? ""
 
     }
     
     public func fetchRandomImage(city: String) async throws -> URL {
-        let result: BackgroundImage = try await fetch(endpoint: .randomImage, queryItems: ["query": city])
+        let result: BackgroundImage = try await fetch(endpoint: .randomImage(city))
         self.copyright = "© \(result.user.userName)"
         return result.urls.regular
     }

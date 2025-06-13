@@ -4,31 +4,24 @@
 import PackageDescription
 
 let package = Package(
-    name: "ShinyModel",
-    platforms: [
-        .iOS(.v15)
-    ],
+    name: "ShinyTestResource",
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "ShinyModel",
-            targets: ["ShinyModel"]),
-    ],
-    dependencies: [
-        .package(path: "../ShinyFormatter"),
-        .package(path: "../ShinyTestResource")
+            name: "ShinyTestResource",
+            targets: ["ShinyTestResource"]),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "ShinyModel",
-            dependencies: [
-                .product(name: "ShinyFormatter", package: "ShinyFormatter")
+            name: "ShinyTestResource",
+            resources: [
+                .process("Resources")
             ]),
         .testTarget(
-            name: "ShinyModelTests",
-            dependencies: ["ShinyModel", "ShinyTestResource"]
+            name: "ShinyTestResourceTests",
+            dependencies: ["ShinyTestResource"]
         ),
     ]
 )

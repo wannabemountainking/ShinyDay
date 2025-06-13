@@ -14,6 +14,7 @@
 
 /* Begin PBXFileReference section */
 		915DE2952D64C538006DDDAC /* ShinyDay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShinyDay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE01E2532DFC0B6A0084B7D5 /* ShinyTestResource */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ShinyTestResource; path = ../ShinyTestResource; sourceTree = SOURCE_ROOT; };
 		EE349C5E2DF1C7DD00233F3D /* ShinyFormatter */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ShinyFormatter; path = ../ShinyFormatter; sourceTree = SOURCE_ROOT; };
 		EE4004822DF1D19000DE641D /* ShinyService */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ShinyService; path = ../ShinyService; sourceTree = SOURCE_ROOT; };
 		EE4004852DF1D3C000DE641D /* ShinyModel */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ShinyModel; path = ../ShinyModel; sourceTree = SOURCE_ROOT; };
@@ -57,6 +58,7 @@
 		915DE28C2D64C538006DDDAC = {
 			isa = PBXGroup;
 			children = (
+				EE01E2532DFC0B6A0084B7D5 /* ShinyTestResource */,
 				EE4004852DF1D3C000DE641D /* ShinyModel */,
 				EE4004822DF1D19000DE641D /* ShinyService */,
 				EE349C5E2DF1C7DD00233F3D /* ShinyFormatter */,

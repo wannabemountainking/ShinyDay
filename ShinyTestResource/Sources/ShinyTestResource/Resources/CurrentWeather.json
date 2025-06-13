@@ -1,0 +1,49 @@
+
+{
+    "coord": {
+        "lon": 127.0214,
+        "lat": 37.5714
+    },
+    "weather": [
+        {
+            "id": 500,
+            "main": "Rain",
+            "description": "실 비",
+            "icon": "10d"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 27.34,
+        "feels_like": 27.23,
+        "temp_min": 25.94,
+        "temp_max": 27.96,
+        "pressure": 1011,
+        "humidity": 42,
+        "sea_level": 1011,
+        "grnd_level": 1000
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 2.57,
+        "deg": 160
+    },
+    "rain": {
+        "1h": 0.13
+    },
+    "clouds": {
+        "all": 75
+    },
+    "dt": 1749800149,
+    "sys": {
+        "type": 1,
+        "id": 8096,
+        "country": "KR",
+        "sunrise": 1749759008,
+        "sunset": 1749812031
+    },
+    "timezone": 32400,
+    "id": 6800746,
+    "name": "Kwanghŭi-dong",
+    "cod": 200
+}

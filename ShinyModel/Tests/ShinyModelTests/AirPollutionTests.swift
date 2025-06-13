@@ -7,6 +7,7 @@
 
 import XCTest
 @testable import ShinyModel
+@testable import ShinyTestResource
 
 final class AirPollutionTests: DecodableTests<AirPollution> {
     // 유닛테스트에서는 서버에 직접접근하지 않고 대신에 JSON 문자열을 복사헤서 사용함
@@ -19,32 +20,7 @@ final class AirPollutionTests: DecodableTests<AirPollution> {
     var numFormatter: NumberFormatter!
     
     override func setUpWithError() throws {
-        jsonString = """
-            {
-                "coord": {
-                    "lon": 127.0214,
-                    "lat": 37.5714
-                },
-                "list": [
-                    {
-                        "main": {
-                            "aqi": 3
-                        },
-                        "components": {
-                            "co": 168.65,
-                            "no": 0.73,
-                            "no2": 9.03,
-                            "o3": 81.66,
-                            "so2": 2.27,
-                            "pm2_5": 28.12,
-                            "pm10": 30.95,
-                            "nh3": 2.14
-                        },
-                        "dt": 1749372121
-                    }
-                ]
-            }
-            """
+        jsonString = ShinyTestResource.JsonString.airPollution
         try super.setUpWithError()
     }
     

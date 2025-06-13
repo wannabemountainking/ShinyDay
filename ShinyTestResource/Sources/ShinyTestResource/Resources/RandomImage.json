@@ -1,0 +1,182 @@
+{
+    "id": "0pKOfcBbDlc",
+    "slug": "body-of-water-near-city-buildings-during-daytime-0pKOfcBbDlc",
+    "alternative_slugs": {
+        "en": "body-of-water-near-city-buildings-during-daytime-0pKOfcBbDlc",
+        "es": "cuerpo-de-agua-cerca-de-edificios-de-la-ciudad-durante-el-dia-0pKOfcBbDlc",
+        "ja": "日中の市庁舎付近の水域-0pKOfcBbDlc",
+        "fr": "plan-deau-pres-des-batiments-de-la-ville-pendant-la-journee-0pKOfcBbDlc",
+        "it": "specchio-dacqua-vicino-agli-edifici-della-citta-durante-il-giorno-0pKOfcBbDlc",
+        "ko": "낮-동안-도시-건물-근처의-수역-0pKOfcBbDlc",
+        "de": "gewasser-in-der-nahe-von-stadtgebauden-tagsuber-0pKOfcBbDlc",
+        "pt": "corpo-de-agua-perto-de-edificios-da-cidade-durante-o-dia-0pKOfcBbDlc"
+    },
+    "created_at": "2021-08-17T07:22:42Z",
+    "updated_at": "2025-06-13T03:34:14Z",
+    "promoted_at": null,
+    "width": 3648,
+    "height": 5472,
+    "color": "#8ca6c0",
+    "blur_hash": "LlGcigM|WBax?wR-flj]M{aef6ay",
+    "description": null,
+    "alt_description": "body of water near city buildings during daytime",
+    "breadcrumbs": [],
+    "urls": {
+        "raw": "https://images.unsplash.com/photo-1629184937274-86dd88be5f2e?ixid=M3w3MTQ4NDF8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDk4MDIxNzZ8&ixlib=rb-4.1.0",
+        "full": "https://images.unsplash.com/photo-1629184937274-86dd88be5f2e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3MTQ4NDF8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDk4MDIxNzZ8&ixlib=rb-4.1.0&q=85",
+        "regular": "https://images.unsplash.com/photo-1629184937274-86dd88be5f2e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MTQ4NDF8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDk4MDIxNzZ8&ixlib=rb-4.1.0&q=80&w=1080",
+        "small": "https://images.unsplash.com/photo-1629184937274-86dd88be5f2e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MTQ4NDF8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDk4MDIxNzZ8&ixlib=rb-4.1.0&q=80&w=400",
+        "thumb": "https://images.unsplash.com/photo-1629184937274-86dd88be5f2e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MTQ4NDF8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDk4MDIxNzZ8&ixlib=rb-4.1.0&q=80&w=200",
+        "small_s3": "https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1629184937274-86dd88be5f2e"
+    },
+    "links": {
+        "self": "https://api.unsplash.com/photos/body-of-water-near-city-buildings-during-daytime-0pKOfcBbDlc",
+        "html": "https://unsplash.com/photos/body-of-water-near-city-buildings-during-daytime-0pKOfcBbDlc",
+        "download": "https://unsplash.com/photos/0pKOfcBbDlc/download?ixid=M3w3MTQ4NDF8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDk4MDIxNzZ8",
+        "download_location": "https://api.unsplash.com/photos/0pKOfcBbDlc/download?ixid=M3w3MTQ4NDF8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDk4MDIxNzZ8"
+    },
+    "likes": 49,
+    "liked_by_user": false,
+    "current_user_collections": [],
+    "sponsorship": null,
+    "topic_submissions": {},
+    "asset_type": "photo",
+    "user": {
+        "id": "OWuAJAm2HpY",
+        "updated_at": "2025-01-29T01:16:14Z",
+        "username": "c2gno",
+        "name": "Sunghoon Kim",
+        "first_name": "Sunghoon",
+        "last_name": "Kim",
+        "twitter_username": null,
+        "portfolio_url": null,
+        "bio": null,
+        "location": "Seoul, South Korea",
+        "links": {
+            "self": "https://api.unsplash.com/users/c2gno",
+            "html": "https://unsplash.com/@c2gno",
+            "photos": "https://api.unsplash.com/users/c2gno/photos",
+            "likes": "https://api.unsplash.com/users/c2gno/likes",
+            "portfolio": "https://api.unsplash.com/users/c2gno/portfolio"
+        },
+        "profile_image": {
+            "small": "https://images.unsplash.com/profile-1631722306356-5b19a32263c3?ixlib=rb-4.1.0&crop=faces&fit=crop&w=32&h=32",
+            "medium": "https://images.unsplash.com/profile-1631722306356-5b19a32263c3?ixlib=rb-4.1.0&crop=faces&fit=crop&w=64&h=64",
+            "large": "https://images.unsplash.com/profile-1631722306356-5b19a32263c3?ixlib=rb-4.1.0&crop=faces&fit=crop&w=128&h=128"
+        },
+        "instagram_username": "c2gno",
+        "total_collections": 0,
+        "total_likes": 0,
+        "total_photos": 42,
+        "total_promoted_photos": 0,
+        "total_illustrations": 0,
+        "total_promoted_illustrations": 0,
+        "accepted_tos": true,
+        "for_hire": false,
+        "social": {
+            "instagram_username": "c2gno",
+            "portfolio_url": null,
+            "twitter_username": null,
+            "paypal_email": null
+        }
+    },
+    "exif": {
+        "make": "Panasonic",
+        "model": "DMC-LX10",
+        "name": "Panasonic, DMC-LX10",
+        "exposure_time": "1/640",
+        "aperture": "7.1",
+        "focal_length": "17.2",
+        "iso": 125
+    },
+    "location": {
+        "name": "Seoul, 대한민국",
+        "city": "서울특별시",
+        "country": "대한민국",
+        "position": {
+            "latitude": 37.566535,
+            "longitude": 126.977969
+        }
+    },
+    "meta": {
+        "index": true
+    },
+    "public_domain": false,
+    "tags": [
+        {
+            "type": "search",
+            "title": "building"
+        },
+        {
+            "type": "search",
+            "title": "city"
+        },
+        {
+            "type": "search",
+            "title": "architecture"
+        },
+        {
+            "type": "search",
+            "title": "blue"
+        },
+        {
+            "type": "search",
+            "title": "urban"
+        },
+        {
+            "type": "search",
+            "title": "seoul"
+        },
+        {
+            "type": "search",
+            "title": "office building"
+        },
+        {
+            "type": "search",
+            "title": "town"
+        },
+        {
+            "type": "search",
+            "title": "skyscraper"
+        },
+        {
+            "type": "search",
+            "title": "tower"
+        },
+        {
+            "type": "search",
+            "title": "port"
+        },
+        {
+            "type": "search",
+            "title": "high rise"
+        },
+        {
+            "type": "search",
+            "title": "dock"
+        },
+        {
+            "type": "search",
+            "title": "pier"
+        },
+        {
+            "type": "search",
+            "title": "waterfront"
+        },
+        {
+            "type": "search",
+            "title": "metropolis"
+        },
+        {
+            "type": "search",
+            "title": "steeple"
+        },
+        {
+            "type": "search",
+            "title": "spire"
+        }
+    ],
+    "views": 265754,
+    "downloads": 4747,
+    "topics": []
+}
