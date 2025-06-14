@@ -6,6 +6,8 @@
 //
 
 import Foundation
+@testable import ShinyModel
+@testable import ShinyTestResource
 
 public enum Endpoint {
     case weather(Double, Double, UserDefaults)
@@ -124,6 +126,21 @@ extension Endpoint {
         return .useProtocolCachePolicy
     }
     
+    var sampleJson: Data? {
+        switch self {
+        case .weather:
+            return ShinyTestResource.JsonData.currentWeather
+        case .forecast:
+            return ShinyTestResource.JsonData.forecast
+        case .air_pollution:
+            return ShinyTestResource.JsonData.airPollution
+        case .reverseGeocoding:
+            return ShinyTestResource.JsonData.reverseGeocoding
+        case .randomImage:
+            return ShinyTestResource.JsonData.randomImage
+        }
+    }
+    
     
     // 요청에 사용할 URLRequest를 만들어서 Header와 QueryItem을 채운 후, return
     func request(customHttpHeaders: [String: String] = [:], customQueryItems: [String: Any] = [:]) throws -> URLRequest {
@@ -161,4 +178,6 @@ extension Endpoint {
         }
         return request
     }
+    
+    
 }

@@ -29,31 +29,38 @@ final class AirPollutionTests: DecodableTests<AirPollution> {
         numFormatter = nil
     }
     
+    // 정규식 메서드 구현
+    func replaceValue(pattern: String, with value: String) {
+        let regex = try! NSRegularExpression(pattern: pattern, options: [])
+        let results = regex.matches(in: jsonString, options: [], range: NSRange(jsonString.startIndex..., in: jsonString))
+        if let match = results.first {
+            if let range = Range(match.range(at: 1), in: jsonString) {
+                jsonString = jsonString.replacingCharacters(in: range, with: value)
+            }
+        }
+    }
+    
     // 디코딩을 미리하는 메서드 작성
     // Unit Test에서는 !사용 권장(에러를 빨리 알아야 함)
     func arrangeDecoding(aqi: Int? = nil, o3: Double? = nil, pm10: Double? = nil, pm2_5: Double? = nil) {
         
-        var jsonString = self.jsonString
-        
         if let aqi {
-            jsonString = self.jsonString.replacingOccurrences(of: "\"aqi\": 3", with: "\"aqi\": \(aqi)")
-            json = jsonString!.data(using: .utf8)!
+            replaceValue(pattern: "\"aqi\":\\s*(\\d+)", with: "\(aqi)")
         }
         
         if let o3 {
-            jsonString = self.jsonString.replacingOccurrences(of: "\"o3\": 81.66", with: "\"o3\": \(o3)")
-            json = jsonString!.data(using: .utf8)!
+            replaceValue(pattern: "\"o3\":\\s*(\\d+\\.?\\d*)", with: "\(o3)")
         }
         
         if let pm10 {
-            jsonString = self.jsonString.replacingOccurrences(of: "\"pm10\": 30.95", with: "\"pm10\": \(pm10)")
-            json = jsonString!.data(using: .utf8)!
+            replaceValue(pattern: "\"pm10\":\\s*(\\d+\\.?\\d*)", with: "\(pm10)")
         }
         
         if let pm2_5 {
-            jsonString = self.jsonString.replacingOccurrences(of: "\"pm2_5\": 28.12", with: "\"pm2_5\": \(pm2_5)")
-            json = jsonString!.data(using: .utf8)!
+            replaceValue(pattern: "\"pm2_5\":\\s*(\\d+\\.?\\d*)", with: "\(pm2_5)")
         }
+        
+        json = jsonString.data(using: .utf8)!
         
         super.arrangeDecoding()
     }
