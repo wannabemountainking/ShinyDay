@@ -7,6 +7,7 @@
 
 import Foundation
 @testable import ShinyModel
+@testable import ShinyFormatter
 @testable import ShinyTestResource
 
 public enum Endpoint {
@@ -16,6 +17,7 @@ public enum Endpoint {
     case reverseGeocoding(Double, Double)
     case randomImage(String)
 }
+
 
 // url, api에서도 Endpoint를 사용하도록 타입 확장
 extension Endpoint {
@@ -28,7 +30,7 @@ extension Endpoint {
             case .weather, .forecast, .air_pollution, .reverseGeocoding:
                 return "api.openweathermap.org"
             case .randomImage:
-            return "api.unsplash.com"
+                return "api.unsplash.com"
             }
     }
     

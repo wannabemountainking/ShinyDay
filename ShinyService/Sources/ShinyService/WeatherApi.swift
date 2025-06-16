@@ -9,6 +9,20 @@ import UIKit
 import ShinyFormatter
 import ShinyModel
 
+
+/*
+ 테스트 관련
+ 웹서버로 요청을 보내서 응답을 받은 다음, 적절한 형태로 파싱을 하는 기능을 담당한 URLSession 객체를 테스트에 맞게 Mocking해야 함
+ 그리고 테스트용으로 JSON 데이터가 필요한데 이것을 제공하는 객체도 필요
+ */
+
+//URLSeesion을 테스트하기 위해 data(for:)를 오버라이딩해야 하는데 이것은 public(public은 모듈 외부에서 접근만 가능하고 오버리아딩 불가. -> open에서는 가능)이어서 이를 위해는 protocol을 사용해 접근 필요?
+public protocol URLSessionType: AnyObject {
+    func data(for request: URLRequest) async throws -> (Data, URLResponse)
+}
+
+extension URLSession: URLSessionType {}
+
 public class WeatherApi: @unchecked Sendable {
     
     public var summary: CurrentWeather?
@@ -17,15 +31,17 @@ public class WeatherApi: @unchecked Sendable {
     public var copyright: String?
     
     let userDefaults: UserDefaults
+    let session: URLSessionType
     
-    init(userDefaults: UserDefaults = .standard) {
+    init(session: URLSessionType = URLSession.shared, userDefaults: UserDefaults = .standard) {
+        self.session = session
         self.userDefaults = userDefaults
     }
     
     private func fetch<ParsingType: Codable>(endpoint: Endpoint, queryItems: [String: Any] = [:]) async throws -> ParsingType {
         let request = try endpoint.request(customQueryItems: queryItems)
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {throw ApiError.invalidResponse}
         guard httpResponse.statusCode == 200 else {throw ApiError.failed(httpResponse.statusCode)}
         
