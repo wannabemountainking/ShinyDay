@@ -52,6 +52,13 @@ class MockURLSession: URLSessionType, @unchecked Sendable {
             dataForRequestCallCount += 1
             dataForRequestUrls.append(request.url!)
         }
+        
+        var request = request
+        if request.url!.absoluteString.hasPrefix("https://images.unsplash.com/") {
+            let url = Bundle.module.url(forResource: "image", withExtension: "png")!
+            request.url = url
+        }
+        
         self.urlRequest = request
         
         let data: Data

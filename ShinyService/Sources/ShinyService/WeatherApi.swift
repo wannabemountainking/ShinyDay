@@ -33,7 +33,7 @@ public class WeatherApi: @unchecked Sendable {
     let userDefaults: UserDefaults
     let session: URLSessionType
     
-    init(session: URLSessionType = URLSession.shared, userDefaults: UserDefaults = .standard) {
+    public init(session: URLSessionType = URLSession.shared, userDefaults: UserDefaults = .standard) {
         self.session = session
         self.userDefaults = userDefaults
     }

@@ -38,7 +38,7 @@ public class LocationManager: NSObject, @unchecked Sendable {
     
     public var location: CLLocation?
     public var locationName: String?
-    public let api = WeatherApi()
+    public let api: WeatherApi
     public var backgroundImage: UIImage?
     
     //  CLLocation은 전체로 UserDefault에 저장할 수 없음(객체 힘듦) 그래서 위도 경도를 나눠서 저장해야 함
@@ -54,7 +54,7 @@ public class LocationManager: NSObject, @unchecked Sendable {
         }
     }
     
-    public init(locationManager: LocationManaging = CLLocationManager(), userDefaults: UserDefaults = .standard, geocoder: Geocodable = CLGeocoder()) {
+    public init(locationManager: LocationManaging = CLLocationManager(), api: WeatherApi = WeatherApi(), userDefaults: UserDefaults = .standard, geocoder: Geocodable = CLGeocoder()) {
         
         manager = locationManager
         
@@ -62,6 +62,7 @@ public class LocationManager: NSObject, @unchecked Sendable {
         manager.desiredAccuracy = kCLLocationAccuracyKilometer
         self.userDefaults = userDefaults
         self.geocoder = geocoder
+        self.api = api
         
         super.init()
         manager.delegate = self
