@@ -8,6 +8,6 @@
 import Foundation
 @testable import ShinyService
 
-class MockWeatherApi: WeatherApi {
+class MockWeatherApi: WeatherApi, @unchecked Sendable {
     
 }

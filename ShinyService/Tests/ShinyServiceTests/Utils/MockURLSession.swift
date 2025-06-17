@@ -54,8 +54,14 @@ class MockURLSession: URLSessionType, @unchecked Sendable {
         }
         self.urlRequest = request
         
-        let data = Endpoint.sampleJson(for: request.url!)!
-
+        let data: Data
+        
+        if request.url?.scheme == "file" {
+            data = try Data(contentsOf: request.url!)
+        } else {
+            data = Endpoint.sampleJson(for: request.url!)!
+        }
+        
         queue.sync(flags: .barrier) {
             let end = Date.now.timeIntervalSinceReferenceDate
             let timing = RequestTiming(url: request.url!, start: start, end: end)

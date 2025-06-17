@@ -28,7 +28,8 @@ let package = Package(
             ]),
         .testTarget(
             name: "ShinyServiceTests",
-            dependencies: ["ShinyService", "ShinyTestResource"]
+            dependencies: ["ShinyService", "ShinyTestResource"],
+            resources: [.process("Resources")]
         ),
     ]
 )

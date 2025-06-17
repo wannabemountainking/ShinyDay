@@ -153,7 +153,7 @@ final class WeatherApiTests: XCTestCase {
     func testFetchLocagtion_setsForecastList() async throws {
         // arrange
         let decoder = JSONDecoder()
-        var data = ShinyTestResource.JsonData.forecast
+        let data = ShinyTestResource.JsonData.forecast
         let forecast = try! decoder.decode(Forecast.self, from: data)
         let expectedDate = forecast.list.map { Date(timeIntervalSince1970: TimeInterval($0.dt))}
         let expectedTemp = forecast.list.map {$0.main.temp}
@@ -166,5 +166,110 @@ final class WeatherApiTests: XCTestCase {
         XCTAssertEqual(expectedTemp, sut.forecastList.map {$0.temperature})
         XCTAssertEqual(expectedIcon, sut.forecastList.map {$0.icon})
         XCTAssertEqual(expectedStatus, sut.forecastList.map {$0.weatherStatus})
+    }
+    
+    // fetchLocation(lat:lon:) 검증. reverseLocation fetch 성공여부
+    func testFetchLocation_returnsLocationName() async throws {
+        // arrange
+        
+        // act
+        let result = try await sut.fetchLocation(lat: lat, lon: lon)
+        // assert
+        XCTAssertFalse(result.isEmpty)
+    }
+    
+    // 요청이 실패했을 때 에러가 throw 되는지
+    func testFetchLocation_ifRequestFails_throws() async throws {
+
+        let networkErrorCodes: [Int] = [400,401, 403,404,405,408,409,410,429,500,501,502,503,504,505,
+        ]
+        for errorCode in networkErrorCodes {
+            // arrange
+            urlSession.statusCode = errorCode
+            // act
+            
+            // assert
+            do {
+                _ = try await sut.fetchLocation(lat: lat, lon: lon)
+                XCTFail()
+            } catch {
+                
+            }
+        }
+    }
+    
+    // fetchRandomImage(city:) 검증, copyright 값도 확인 필요
+    func testFetchRandomImage_returnsUrl() async throws {
+        // arrange
+        let decoder = JSONDecoder()
+        let data = ShinyTestResource.JsonData.randomImage
+        let expectedImage = try! decoder.decode(BackgroundImage.self, from: data)
+        let expectedCopyright = "© \(expectedImage.user.userName)"
+        // act
+        let result: URL = try await sut.fetchRandomImage(city: "Seoul")
+        // assert
+        XCTAssertEqual(expectedCopyright, sut.copyright)
+        // url체크는 어려우니 host만 체크
+        XCTAssertEqual("images.unsplash.com", result.host)
+    }
+    
+    // fetchRandomImage 메서드 호출 실패 검증
+    func testFetchRandomImage_ifRequestFails_throws() async throws {
+        let networkErrorCodes: [Int] = [400,401, 403,404,405,408,409,410,429,500,501,502,503,504,505,
+        ]
+        for errorCode in networkErrorCodes {
+            // arrange
+            urlSession.statusCode = errorCode
+            // act
+            
+            // assert
+            do {
+                _ = try await sut.fetchRandomImage(city: "Seoul")
+                XCTFail()
+            } catch {
+                
+            }
+        }
+    }
+    
+    // downloadImage 검증. 이미지가 다운로드 되는지
+    func testDownloadImage_returnsImage() async throws {
+        // arrange
+        let url = Bundle.module.url(forResource: "image", withExtension: "png")!
+        // act
+        let result = try await sut.downloadImage(from: url)
+        // assert
+        XCTAssertTrue(result.size.width > 0)
+    }
+    
+    // 다운로드 요청 실패시 에러 던지나?
+    func testDownloadImage_ifRequestFails_throws() async throws {
+        // arrange
+        let url = URL(string: "file://somewhereovertherainbow")!
+        // act
+        
+        // assert
+        do {
+            _ = try await sut.downloadImage(from: url)
+            XCTFail()
+        } catch {
+            
+        }
+    }
+    
+    // 파일이 있지만 에러를 던지는 경우인지
+    func testDownloadImage_ifImageInitFails_throws() async throws {
+        
+        // arrange
+        let url = Bundle.module.url(forResource: "text", withExtension: "png")!
+        // act
+        
+        // assert
+        do {
+            _ = try await sut.downloadImage(from: url)
+            XCTFail()
+        } catch {
+            
+        }
     }
 }

@@ -102,10 +102,10 @@ public class WeatherApi: @unchecked Sendable {
     }
     
     public func downloadImage(from url: URL) async throws -> UIImage {
-//        var request = URLRequest(url: url)
-//        request.cachePolicy = .returnCacheDataElseLoad
-//        
-        let (imageData, _) = try await URLSession.shared.data(from: url)
+        var request = URLRequest(url: url)
+        request.cachePolicy = .returnCacheDataElseLoad
+        
+        let (imageData, _) = try await session.data(for: request)
         
         guard let image = UIImage(data: imageData) else {throw ApiError.emptyData}
         return image
