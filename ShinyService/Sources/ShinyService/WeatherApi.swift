@@ -58,24 +58,25 @@ public class WeatherApi: @unchecked Sendable {
         let (weather, forecast, airPollution) = try await (weatherResponse, forecastResponse, airPollutionResponse)
         
         summary = weather
-        guard let data = summary else {return}
-        let feelsLike = DetailInfo(image: UIImage(systemName: "thermometer.variable.and.figure"),
-                                   title: "체감온도",
-                                   value: data.main.feelsLike.temperatureString)
-        self.detailInfo.append(feelsLike)
-        
-        let humidity = DetailInfo(image: UIImage(systemName: "humidity"),
-                                  title: "습도",
-                                  value: "\(data.main.humidity)%")
-        self.detailInfo.append(humidity)
-        let pressure = DetailInfo(image: UIImage(systemName: "gauge.with.dots.needle.50percent"),
-                                  title: "기압",
-                                  value: data.main.pressure.pressureStringWithoutUnit,
-                                  description: "hPa")
-        self.detailInfo.append(pressure)
-        let visibility = DetailInfo(image: UIImage(systemName: "eye"), title: "가시거리", value: data.visibility.visibilityString, description: "km")
-        self.detailInfo.append(visibility)
-        
+        if let data = summary {
+            let feelsLike = DetailInfo(image: UIImage(systemName: "thermometer.variable.and.figure"),
+                                       title: "체감온도",
+                                       value: data.main.feelsLike.temperatureString)
+            self.detailInfo.append(feelsLike)
+            
+            let humidity = DetailInfo(image: UIImage(systemName: "humidity"),
+                                      title: "습도",
+                                      value: "\(data.main.humidity)%")
+            self.detailInfo.append(humidity)
+            let pressure = DetailInfo(image: UIImage(systemName: "gauge.with.dots.needle.50percent"),
+                                      title: "기압",
+                                      value: data.main.pressure.pressureStringWithoutUnit,
+                                      description: "hPa")
+            self.detailInfo.append(pressure)
+            let visibility = DetailInfo(image: UIImage(systemName: "eye"), title: "가시거리", value: data.visibility.visibilityString, description: "km")
+            self.detailInfo.append(visibility)
+        }
+    
         self.forecastList = forecast.list.map {
             let date = Date(timeIntervalSince1970: TimeInterval($0.dt))
             let temp = $0.main.temp
@@ -84,7 +85,7 @@ public class WeatherApi: @unchecked Sendable {
             
             return ForecastData(date: date, temperature: temp, weatherStatus: status, icon: icon)
         }
-        
+            
         self.detailInfo.append(contentsOf: airPollution.infoList)
     }
     

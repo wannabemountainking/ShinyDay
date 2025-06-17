@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct CurrentWeather: Codable {
-    public struct Weather: Codable {
+public struct CurrentWeather: Codable, Equatable {
+    public struct Weather: Codable, Equatable {
         public let id: Int
         public let main: String
         public let description: String
@@ -17,7 +17,7 @@ public struct CurrentWeather: Codable {
     
     public let weather: [Weather]
     
-    public struct Main: Codable {
+    public struct Main: Codable, Equatable {
         public enum CodingKeys: String, CodingKey {
             case temp
             case feelsLike = "feels_like"

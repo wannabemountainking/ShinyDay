@@ -8,21 +8,21 @@
 import Foundation
 
 
-public struct Forecast: Codable {
+public struct Forecast: Codable, Equatable {
     public let cod: String
     public let message: Int
     public let cnt: Int
     
-    public struct ListItem: Codable {
+    public struct ListItem: Codable, Equatable {
         public let dt: Double
         
-        public struct Main: Codable {
+        public struct Main: Codable, Equatable {
             public let temp: Double
         }
         
         public let main: Main
         
-        public struct Weather: Codable {
+        public struct Weather: Codable, Equatable {
             public let description: String
             public let icon: String
         }
@@ -34,7 +34,7 @@ public struct Forecast: Codable {
     public let list: [ListItem]
 }
 
-public struct ForecastData {
+public struct ForecastData: Codable, Equatable {
     public let date: Date
     public let temperature: Double
     public let weatherStatus: String

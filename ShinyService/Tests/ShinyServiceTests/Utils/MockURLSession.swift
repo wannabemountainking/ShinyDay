@@ -42,18 +42,25 @@ class MockURLSession: URLSessionType, @unchecked Sendable {
         self.statusCode = statusCode
     }
     
+    private var queue = DispatchQueue(label: "com.kxcoding.MockURLSession", attributes: .concurrent)
+    
     // URLSession에 사용할 json 데이터 리턴(그 과정에서 requestTiming에 관한 정보 수집)
     func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         let start = Date.now.timeIntervalSinceReferenceDate
-        dataForRequestCallCount += 1
-        dataForRequestUrls.append(request.url!)
         
+        queue.sync(flags: .barrier) {
+            dataForRequestCallCount += 1
+            dataForRequestUrls.append(request.url!)
+        }
         self.urlRequest = request
         
         let data = Endpoint.sampleJson(for: request.url!)!
-        let end = Date.now.timeIntervalSinceReferenceDate
-        let timing = RequestTiming(url: request.url!, start: start, end: end)
-        dataForRequestCallTimings.append(timing)
+
+        queue.sync(flags: .barrier) {
+            let end = Date.now.timeIntervalSinceReferenceDate
+            let timing = RequestTiming(url: request.url!, start: start, end: end)
+            dataForRequestCallTimings.append(timing)
+        }
         
         return (data, urlResponse)
     }

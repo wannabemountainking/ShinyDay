@@ -8,17 +8,17 @@
 import UIKit
 import ShinyFormatter
 
-public struct AirPollution: Codable {
+public struct AirPollution: Codable, Equatable {
     
-    public struct Item: Codable {
+    public struct Item: Codable, Equatable {
         
-        public struct Main: Codable {
+        public struct Main: Codable, Equatable {
             public let aqi: Int
         }
         
         public let main: Main
         
-        public struct Components: Codable {
+        public struct Components: Codable, Equatable {
             public let o3: Double
             public let pm2_5: Double
             public let pm10: Double

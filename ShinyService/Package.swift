@@ -15,7 +15,8 @@ let package = Package(
             targets: ["ShinyService"]),
     ],
     dependencies: [
-        .package(path: "../ShinyModel")
+        .package(path: "../ShinyModel"),
+        .package(path: "../ShinyTestResource")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -27,7 +28,7 @@ let package = Package(
             ]),
         .testTarget(
             name: "ShinyServiceTests",
-            dependencies: ["ShinyService"]
+            dependencies: ["ShinyService", "ShinyTestResource"]
         ),
     ]
 )

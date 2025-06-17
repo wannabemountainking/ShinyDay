@@ -7,7 +7,7 @@
 
 import UIKit
 
-public struct DetailInfo {
+public struct DetailInfo: Equatable {
     public let image: UIImage?
     public let title: String
     public let value: String

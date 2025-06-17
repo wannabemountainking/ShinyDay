@@ -8,13 +8,13 @@
 import Foundation
 
 
-public struct BackgroundImage: Codable {
-    public struct ImageUrl: Codable {
+public struct BackgroundImage: Codable, Equatable {
+    public struct ImageUrl: Codable, Equatable {
         public let regular: URL
     }
     public let urls: ImageUrl
     
-    public struct User: Codable {
+    public struct User: Codable, Equatable {
         public enum CodingKeys: String, CodingKey {
             case userName = "username"
         }
